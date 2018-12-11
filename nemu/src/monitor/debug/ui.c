@@ -81,13 +81,13 @@ static int cmd_info(char *args) {
   
   if (strcmp(arg, "r") == 0) {
     for (i = R_EAX; i <= R_EDI; i++) {
-      printf("%-10s%-15x%u\n", regsl[i], reg_l(i), reg_l(i));
+      printf("%-10s0x%-15x%u\n", regsl[i], reg_l(i), reg_l(i));
     }
     for (i = R_AX; i <= R_DI; i++) {
-      printf("%-10s%-15x%u\n", regsw[i], reg_w(i), reg_w(i));
+      printf("%-10s0x%-15x%u\n", regsw[i], reg_w(i), reg_w(i));
     }
     for (i = R_AL; i <= R_BH; i++) {
-      printf("%-10s%-15x%u\n", regsb[i], reg_b(i), reg_b(i));
+      printf("%-10s0x%-15x%u\n", regsb[i], reg_b(i), reg_b(i));
     }
   }
   else if (strcmp(arg, "b") == 0) {
@@ -117,14 +117,14 @@ static int cmd_x(char *args) {
   int n = atoi(arg1);
   for (i = 0; i < n; i+=4) {
     if (i + 4 < n) {      
-      printf("%-10x : %-15x%-15x%-15x%-15x\n", addr, paddr_read(addr, 4), paddr_read(addr + 4, 4),
+      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, paddr_read(addr, 4), paddr_read(addr + 4, 4),
 	paddr_read(addr + 8, 4), paddr_read(addr + 12, 4));
     }
     else {
       int j;
-      printf("%-10x : ", addr);
+      printf("0x%-10x : ", addr);
       for (j = 0; j < n - i; j++) {	
-	printf("%-15x", paddr_read(addr, 4));
+	printf("0x%-15x", paddr_read(addr, 4));
 	addr += 4;
       }
       printf("\n");
