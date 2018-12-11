@@ -111,8 +111,7 @@ static int cmd_x(char *args) {
   const char* arg2 = strtok(NULL, " ");
 
   /* TODO: calc the expr */
-  printf("%s\n", arg2);
-  paddr_t addr = atoi(arg2);
+  paddr_t addr = strtol(arg2, NULL, 16);
 
   int i;
   int n = atoi(arg1);
