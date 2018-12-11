@@ -111,14 +111,15 @@ static int cmd_x(char *args) {
   const char* arg2 = strtok(NULL, " ");
 
   /* TODO: calc the expr */
+  printf("%s\n", arg2);
   paddr_t addr = atoi(arg2);
 
   int i;
   int n = atoi(arg1);
   for (i = 0; i < n; i+=4) {
     if (i + 4 < n) {      
-      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, paddr_read(addr, 4), paddr_read(addr + 4, 4),
-	paddr_read(addr + 8, 4), paddr_read(addr + 12, 4));
+      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, paddr_read(addr, 4), 
+	  paddr_read(addr + 4, 4), paddr_read(addr + 8, 4), paddr_read(addr + 12, 4));
     }
     else {
       int j;
