@@ -110,6 +110,39 @@ static bool make_token(char *e) {
   return true;
 }
 
+bool check_parentheses(const char* e, int p, int q) {
+  return true;
+}
+
+uint32_t eval(const char* e, int p, int q) {
+  if (p > q) {
+    Assert(0, "Bad expression");
+    return 0;
+  }
+  else if (p == q) {
+    /* Single token */
+    return e[p] - '0';
+  }
+  else if (check_parentheses(e, p, q) == true) {
+   /* surrounded by a matched pair of parentheses */
+   return eval(e, p + 1, q - 1);
+  }
+  else {
+    int op = TODO();
+    int op_type = TODO();
+    uint32_t val1 = eval(e, p, op - 1);
+    uint32_t val2 = eval(e, op + 1, q);
+
+    switch (op_type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: Assert(0, "Uknown op type!");
+    }
+  }
+}
+
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
@@ -117,7 +150,5 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
-
-  return 0;
+  return eval(e, 0, strlen(e) - 1);
 }
