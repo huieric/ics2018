@@ -228,10 +228,12 @@ bool check_expr(const char* e) {
       iStackSize--;
     }
     if (iStackSize < 0) {
+      Log("unmatched right paren");
       return false;
     }
   }
   if (iStackSize != 0) {
+    Log("left parens != right parens");
     return false;
   }
 
@@ -247,6 +249,7 @@ uint32_t expr(char *e, bool *success) {
   if (!check_expr(e)) {
     Log("Illegal expression");
     *success = false;
+    return  0;
   }
     
   return eval(e, 0, strlen(e) - 1);
