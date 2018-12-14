@@ -156,7 +156,8 @@ uint32_t eval(const char* e, int p, int q) {
     int op = 0;
     for (int i = 0, pos = 0; i < nr_token; i++, pos += strlen(tokens[i].str)) {
       if (pos > q) {
-	Assert(0, "failed to find main operator");
+	/*Assert(0, "failed to find main operator");*/
+	panic("Illegal expression!");
 	return 0;
       }      
       if (pos < p) {
