@@ -169,10 +169,16 @@ uint32_t eval(const char* e, int p, int q) {
 	  tokens[i].type != '*' && tokens[i].type != '/') {
 	continue;
       }
+      //在一对括号里面吗？
+      bool bInParens = false;
       for (int j = pos; j >= p && e[j] != ')'; j--) {
 	if (e[j] == '(') {
-	  continue;
+	  bInParens = true;
+	  break;
 	}
+      }
+      if (bInParens) {
+	continue;
       }
       //后面有没有优先级更低的？
       if (tokens[i].type == '*' || tokens[i].type == '/') {
