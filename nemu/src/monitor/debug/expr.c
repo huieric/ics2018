@@ -79,11 +79,6 @@ static bool make_token(char *e) {
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
         position += substr_len;
-
-        /* TODO: Now a new token is recognized with rules[i]. Add codes
-         * to record the token in the array `tokens'. For certain types
-         * of tokens, some extra actions should be performed.
-         */
 	
 	if (substr_len >= 32)
 	{
@@ -92,9 +87,9 @@ static bool make_token(char *e) {
 	}
 
         switch (rules[i].token_type) {
-	  case TK_DEC: 
           default: tokens[nr_token].type = rules[i].token_type;
 		   strncpy(tokens[nr_token].str, substr_start, substr_len);
+		   tokens[nr_token].str[substr_len] = '\0';
         }
 	
 	nr_token++;
@@ -146,8 +141,8 @@ uint32_t eval(const char* e, int p, int q) {
     return e[p] - '0';
   }
   else if (check_parentheses(e, p, q) == true) {
-   /* surrounded by a matched pair of parentheses */
-   return eval(e, p + 1, q - 1);
+    /* surrounded by a matched pair of parentheses */
+    return eval(e, p + 1, q - 1);
   }
   else {
     int op = 0;
@@ -197,6 +192,8 @@ uint32_t eval(const char* e, int p, int q) {
     }
     
     assert(p < op && op < q);
+    Log("main operator at %d", op);
+
     int op_type = e[op];
     uint32_t val1 = eval(e, p, op - 1);
     uint32_t val2 = eval(e, op + 1, q);
@@ -213,6 +210,7 @@ uint32_t eval(const char* e, int p, int q) {
 
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
+    Log("make_token: %s failed", e);
     *success = false;
     return 0;
   }

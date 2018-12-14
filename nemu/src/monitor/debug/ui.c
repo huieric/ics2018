@@ -103,8 +103,14 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_p(char *args) {
+  char* arg = strtok(args, " ");
+  if (arg == NULL) {
+    printf("One argument should be provided!\n");
+    return 0;
+  }
+
   bool success;
-  uint32_t val = expr(args, &success);
+  uint32_t val = expr(arg, &success);
   if (success) {
     printf("%u\n", val);
   }
