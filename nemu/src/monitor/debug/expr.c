@@ -203,7 +203,7 @@ uint32_t eval(const char* e, int p, int q) {
       case '-': return val1 - val2;
       case '*': return val1 * val2;
       case '/': return val1 / val2;
-      default: Assert(0, "Uknown op type!");
+      default: Assert(0, "Unknown op type!");
     }
   }
 }

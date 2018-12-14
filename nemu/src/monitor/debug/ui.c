@@ -103,9 +103,9 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_p(char *args) {
-  char* arg = strtok(args, " ");
+  char* arg = args;
   if (arg == NULL) {
-    printf("One argument should be provided!\n");
+    Log("One argument should be provided!\n");
     return 0;
   }
 
