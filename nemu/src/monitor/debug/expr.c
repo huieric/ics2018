@@ -131,7 +131,7 @@ bool check_parentheses(const char* e, int p, int q) {
   return true;
 }
 
-uint32_t eval(const char* e, int p, int q, bool* success) {
+uint32_t eval(const char* e, int p, int q) {
   if (p > q) {
     Assert(0, "Bad expression");
     return 0;
@@ -145,19 +145,18 @@ uint32_t eval(const char* e, int p, int q, bool* success) {
     Log("remove whitespace at %d and %d", p, q);
     while (e[p] == ' ') p++;
     while (e[q] == ' ') q--;
-    return eval(e, p, q, success);
+    return eval(e, p, q);
   }
   else if (check_parentheses(e, p, q) == true) {
     /* surrounded by a matched pair of parentheses */
     Log("remove a pair of parentheses at %d and %d", p, q);
-    return eval(e, p + 1, q - 1, success);
+    return eval(e, p + 1, q - 1);
   }
   else {
     int op = 0;
     for (int i = 0, pos = 0; i < nr_token; i++, pos += strlen(tokens[i].str)) {
       if (pos > q) {
-	/*Assert(0, "failed to find main operator");*/
-	*success = false;
+	Assert(0, "failed to find main operator");
 	return 0;
       }      
       if (pos < p) {
@@ -205,8 +204,8 @@ uint32_t eval(const char* e, int p, int q, bool* success) {
     Log("main operator at %d", op);
 
     int op_type = e[op];
-    uint32_t val1 = eval(e, p, op - 1, success);
-    uint32_t val2 = eval(e, op + 1, q, success);
+    uint32_t val1 = eval(e, p, op - 1);
+    uint32_t val2 = eval(e, op + 1, q);
 
     switch (op_type) {
       case '+': return val1 + val2;
@@ -218,13 +217,37 @@ uint32_t eval(const char* e, int p, int q, bool* success) {
   }
 }
 
+bool check_expr(const char* e) {
+  //check parentheses
+  int iStackSize = 0;
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '(') {
+      iStackSize++;
+    }
+    if (tokens[i].type == ')') {
+      iStackSize--;
+    }
+    if (iStackSize < 0) {
+      return false;
+    }
+  }
+  if (iStackSize != 0) {
+    return false;
+  }
+
+  return true;
+}
+
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     Log("make_token: %s failed", e);
     *success = false;
     return 0;
   }
-  
-  *success = true;
-  return eval(e, 0, strlen(e) - 1, success);
+  if (!check_expr(e)) {
+    Log("Illegal expression");
+    *success = false;
+  }
+    
+  return eval(e, 0, strlen(e) - 1);
 }
