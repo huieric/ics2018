@@ -138,10 +138,18 @@ uint32_t eval(const char* e, int p, int q) {
   }
   else if (p == q) {
     /* Single token */
+    Log("Single token at %d", p);
     return e[p] - '0';
+  }
+  else if (e[p] == ' ' || e[q] == ' ') {
+    Log("remove whitespace at %d and %d", p, q);
+    while (e[p] == ' ') p++;
+    while (e[q] == ' ') q--;
+    return eval(e, p, q);
   }
   else if (check_parentheses(e, p, q) == true) {
     /* surrounded by a matched pair of parentheses */
+    Log("remove a pair of parentheses at %d and %d", p, q);
     return eval(e, p + 1, q - 1);
   }
   else {
