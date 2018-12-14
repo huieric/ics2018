@@ -92,8 +92,9 @@ static bool make_token(char *e) {
 	}
 
         switch (rules[i].token_type) {
-	  case TK_DEC: strncpy(tokens[nr_token].str, substr_start, substr_len);
+	  case TK_DEC: 
           default: tokens[nr_token].type = rules[i].token_type;
+		   strncpy(tokens[nr_token].str, substr_start, substr_len);
         }
 	
 	nr_token++;
@@ -111,6 +112,27 @@ static bool make_token(char *e) {
 }
 
 bool check_parentheses(const char* e, int p, int q) {
+  if (e[p] != '(' || e[q] != ')') {
+    return false;
+  }
+
+  int iStackSize = 0;
+  for (int i = p + 1; i < q; i++) {
+    if (e[i] == '(') {
+      iStackSize++;
+    }
+    if (e[i] == ')') {
+      iStackSize--;
+    }
+
+    if (iStackSize < 0) {
+      return false;
+    }    
+  }
+
+  if (iStackSize != 0) {
+    return false;
+  }
   return true;
 }
 
@@ -128,8 +150,54 @@ uint32_t eval(const char* e, int p, int q) {
    return eval(e, p + 1, q - 1);
   }
   else {
-    int op = TODO();
-    int op_type = TODO();
+    int op = 0;
+    for (int i = 0, pos = 0; i < nr_token; i++, pos += strlen(tokens[i].str)) {
+      if (pos > q) {
+	Assert(0, "failed to find main operator");
+	return 0;
+      }      
+      if (pos < p) {
+	continue;
+      }
+
+      assert(p <= pos && pos <= q);
+
+      if (tokens[i].type != '+' && tokens[i].type != '-' &&
+	  tokens[i].type != '*' && tokens[i].type != '/') {
+	continue;
+      }
+      for (int j = pos; j >= p && e[j] != ')'; j--) {
+	if (e[j] == '(') {
+	  continue;
+	}
+      }
+      //后面有没有优先级更低的？
+      if (tokens[i].type == '*' || tokens[i].type == '/') {
+	int iStackSize = 0;
+	bool bHasLower = false;
+	for (int j = pos; j <= q; j++) {
+	  if (e[j] == '(') {
+	    iStackSize++;
+	  }
+	  if (e[j] == ')') {
+	    iStackSize--;
+	  }
+	  assert(iStackSize >= 0);
+	  if (iStackSize == 0 && (e[j] == '+' || e[j] == '-')) {
+	    bHasLower = true;
+	    break;
+	  }
+	}
+	if (bHasLower) {
+	  continue;
+	}
+      }
+
+      break;
+    }
+    
+    assert(p < op && op < q);
+    int op_type = e[op];
     uint32_t val1 = eval(e, p, op - 1);
     uint32_t val2 = eval(e, op + 1, q);
 
@@ -149,6 +217,5 @@ uint32_t expr(char *e, bool *success) {
     return 0;
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
   return eval(e, 0, strlen(e) - 1);
 }
