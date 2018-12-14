@@ -214,6 +214,7 @@ uint32_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-
+  
+  *success = true;
   return eval(e, 0, strlen(e) - 1);
 }
