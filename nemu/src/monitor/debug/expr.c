@@ -195,7 +195,8 @@ uint32_t eval(const char* e, int p, int q) {
 	  continue;
 	}
       }
-
+      
+      op = pos;
       break;
     }
     
