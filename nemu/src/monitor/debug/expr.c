@@ -131,7 +131,7 @@ bool check_parentheses(const char* e, int p, int q) {
   return true;
 }
 
-uint32_t eval(const char* e, int p, int q) {
+uint32_t eval(const char* e, int p, int q, bool* success) {
   if (p > q) {
     Assert(0, "Bad expression");
     return 0;
@@ -145,19 +145,19 @@ uint32_t eval(const char* e, int p, int q) {
     Log("remove whitespace at %d and %d", p, q);
     while (e[p] == ' ') p++;
     while (e[q] == ' ') q--;
-    return eval(e, p, q);
+    return eval(e, p, q, success);
   }
   else if (check_parentheses(e, p, q) == true) {
     /* surrounded by a matched pair of parentheses */
     Log("remove a pair of parentheses at %d and %d", p, q);
-    return eval(e, p + 1, q - 1);
+    return eval(e, p + 1, q - 1, success);
   }
   else {
     int op = 0;
     for (int i = 0, pos = 0; i < nr_token; i++, pos += strlen(tokens[i].str)) {
       if (pos > q) {
 	/*Assert(0, "failed to find main operator");*/
-	panic("Illegal expression!");
+	*success = false;
 	return 0;
       }      
       if (pos < p) {
@@ -205,8 +205,8 @@ uint32_t eval(const char* e, int p, int q) {
     Log("main operator at %d", op);
 
     int op_type = e[op];
-    uint32_t val1 = eval(e, p, op - 1);
-    uint32_t val2 = eval(e, op + 1, q);
+    uint32_t val1 = eval(e, p, op - 1, success);
+    uint32_t val2 = eval(e, op + 1, q, success);
 
     switch (op_type) {
       case '+': return val1 + val2;
@@ -226,5 +226,5 @@ uint32_t expr(char *e, bool *success) {
   }
   
   *success = true;
-  return eval(e, 0, strlen(e) - 1);
+  return eval(e, 0, strlen(e) - 1, success);
 }
