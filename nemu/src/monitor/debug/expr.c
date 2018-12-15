@@ -202,9 +202,9 @@ uint32_t eval(int p, int q) {
     }      
 
     assert(p <= op && op < q);
-    Log("main operator at %d", op);
 
     int op_type = tokens[op].type;
+    Log("main operator %c at %d", op_type, op);
     uint32_t val2 = eval(op + 1, q);
     if (op_type == '-' && op == p) {
       Log("unary minus at %d", op);
