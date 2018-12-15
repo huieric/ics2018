@@ -174,8 +174,12 @@ int main_op(int p, int q) {
   if (top > 0) { 
     int priority = 4;
     for (int i = top - 1; i >= 0; i--) {
-      if ((tokens[op_stack[i]].type == TK_EQ || tokens[op_stack[i]].type == TK_NEQ ||
-	  tokens[op_stack[i]].type == TK_AND) && priority > 0) {
+      if (tokens[op_stack[i]].type == TK_AND && priority > -1) {
+	op = op_stack[i];
+	priority = -1;
+      }
+      if ((tokens[op_stack[i]].type == TK_EQ || tokens[op_stack[i]].type == TK_NEQ) && 
+	  priority > 0) {
 	op = op_stack[i];
 	priority = 0;
       }
