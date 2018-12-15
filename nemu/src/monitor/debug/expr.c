@@ -231,6 +231,7 @@ uint32_t eval(int p, int q) {
 }
 
 bool check_expr(int p, int q) {
+  assert(p <= q);
   if (p == q && tokens[p].type == TK_DEC) {
     Log("Single number at %d", p);
     return true;
@@ -248,7 +249,14 @@ bool check_expr(int p, int q) {
     return check_expr(p, q - 1);
   }
   int op = main_op(p, q);
-  return check_expr(p, op - 1) && check_expr(op + 1, q);
+  if (op == p) {
+    Log("unary minus at %d", op);
+    return (tokens[op].type == '-') && check_expr(op + 1, q);
+  }
+  else {
+    return check_expr(p, op - 1) && check_expr(op + 1, q);
+  }
+  return false;
 }
 
 uint32_t expr(char *e, bool *success) {
