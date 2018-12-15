@@ -6,7 +6,7 @@
 #include <string.h>
 
 // this should be enough
-static char buf[65536] = { 0 };
+static char buf[65536];
 static const int max_whitespace_num = 5;
 static const int gen_buf_limit = 65536 / 3; //保证不会溢出
 
@@ -16,17 +16,17 @@ static inline uint32_t choose(uint32_t n) {
 
 void gen_rand_whitespace() { //随机插入空格
   for (int i = 0; i <= choose(max_whitespace_num); i++) {
-    sprintf(buf, " ");
+    sprintf(buf + strlen(buf), " ");
   }
 }
 
 void gen(char* str) {
-  sprintf(buf, "%s", str);
+  sprintf(buf + strlen(buf), "%s", str);
   gen_rand_whitespace();
 }
 
 void gen_num() {
-  sprintf(buf, "%du", rand()); //保证表达式进行无符号运算
+  sprintf(buf + strlen(buf), "%d", rand());
   gen_rand_whitespace();
 }
 
@@ -39,7 +39,7 @@ void gen_rand_op() {
   }
 }
 
-static inline void gen_rand_expr() {
+void gen_rand_expr() {
   if (strlen(buf) > gen_buf_limit) {
     gen_num();
     return;
@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
+    memset(buf, 0, sizeof(buf));
     gen_rand_expr();
 
     sprintf(code_buf, code_format, buf);
@@ -78,7 +79,7 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc .code.c -o .expr");
+    int ret = system("gcc .code.c -o .expr -Werror=div-by-zero");
     if (ret != 0) continue;
 
     fp = popen("./.expr", "r");
