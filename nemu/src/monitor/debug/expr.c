@@ -139,30 +139,7 @@ bool check_parentheses(int p, int q) {
   return true;
 }
 
-uint32_t eval(int p, int q) {
-  if (p > q) {
-    Assert(0, "Bad expression");
-    return 0;
-  }
-  else if (p == q) {
-    /* Single token */
-    Log("Single token at %d", p);
-    return atoi(tokens[p].str);
-  }
-  else if (tokens[p].type == TK_NOTYPE) {
-    Log("remove whitespace at %d", p);
-    return eval(p + 1, q);
-  }
-  else if (tokens[q].type == TK_NOTYPE) {
-    Log("remove whitespace at %d", q);
-    return eval(p, q - 1);
-  }
-  else if (check_parentheses(p, q) == true) {
-    /* surrounded by a matched pair of parentheses */
-    Log("remove a pair of parentheses at %d and %d", p, q);
-    return eval(p + 1, q - 1);
-  }
-  else { //寻找主运算符
+int main_op(int p, int q) {
     int op = 0;
     for (int i = p + 1; i <= q - 1; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
@@ -200,14 +177,40 @@ uint32_t eval(int p, int q) {
 	if (bHasLower) {
 	  continue;
 	}
+	op = i;
+	break;
       }
-
-      op = i;
-      break;
-    }      
+    }
 
     assert(p <= op && op < q);
+    return op;
+}
 
+uint32_t eval(int p, int q) {
+  if (p > q) {
+    Assert(0, "Bad expression");
+    return 0;
+  }
+  else if (p == q) {
+    /* Single token */
+    Log("Single token at %d", p);
+    return atoi(tokens[p].str);
+  }
+  else if (tokens[p].type == TK_NOTYPE) {
+    Log("remove whitespace at %d", p);
+    return eval(p + 1, q);
+  }
+  else if (tokens[q].type == TK_NOTYPE) {
+    Log("remove whitespace at %d", q);
+    return eval(p, q - 1);
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* surrounded by a matched pair of parentheses */
+    Log("remove a pair of parentheses at %d and %d", p, q);
+    return eval(p + 1, q - 1);
+  }
+  else { //寻找主运算符
+    int op = main_op(p, q);
     int op_type = tokens[op].type;
     Log("main operator %c at %d", op_type, op);
     uint32_t val2 = eval(op + 1, q);
@@ -227,70 +230,25 @@ uint32_t eval(int p, int q) {
   }
 }
 
-bool check_expr() {
-  //括号检查
-  //1. 括号要成对、匹配
-  //2. 成对的括号中间至少有一个token
-  int stack[32] = { -1 };
-  int top = 0;
-  for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '(') {
-      stack[top++] = i;
-    }
-    if (tokens[i].type == ')') {
-      assert(top >= 0);
-      if (top == 0) {
-	Log("unmatched right paren at %d", i);
-	return false;
-      }      
-      if (i - stack[top - 1] <= 1) {
-	Log("At least one token should be in the pair of parens at (%d, %d)",
-	    stack[top - 1], i);
-	return false;
-      }
-      stack[--top] = -1;
-    }
+bool check_expr(int p, int q) {
+  if (p == q && tokens[p].type == TK_DEC) {
+    Log("Single number at %d", p);
+    return true;
   }
-  if (top != 0) {
-    Log("number of left parens and right parens not equal");
-    return false;
+  if (tokens[p].type == '(' && tokens[q].type == ')') {
+    Log("A pair of parens at (%d, %d)", p, q);
+    return check_expr(p + 1, q - 1);
   }
-  
-  //运算符检查
-  //1. 算术运算符相邻的两个token必须是数字（除去空格）
-  for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '+' ||
-	tokens[i].type == '*' || tokens[i].type == '/') {
-      int left = i - 1;
-      while (left >= 0 && (tokens[left].type == TK_NOTYPE || 
-			   tokens[left].type == '(' ||
-			   tokens[left].type == ')')) {
-	left--;
-      }
-      if (left < 0 || tokens[left].type != TK_DEC) {
-	Log("Leftmost token of operator %c at %d should be a number", 
-	    tokens[i].type, i);
-	return false;
-      }
-      
-    }
-    if (tokens[i].type == '+' || tokens[i].type == '-' || 
-	tokens[i].type == '*' || tokens[i].type == '/') {
-      int right = i + 1;
-      while (right < nr_token && (tokens[right].type == TK_NOTYPE || 
-				  tokens[right].type == '(' ||
-				  tokens[right].type == ')')) {
-	right++;
-      }
-      if (right >= nr_token || tokens[right].type != TK_DEC) {
-	Log("Rightmost token of operator %c at %d should be a number",
-	    tokens[i].type, i);
-	return false;
-      }
-    }
+  if (tokens[p].type == TK_NOTYPE) {
+    Log("Left whitespace at %d", p);
+    return check_expr(p + 1, q);
   }
-
-  return true;
+  if (tokens[q].type == TK_NOTYPE) {
+    Log("Right whitespace at %d", q);
+    return check_expr(p, q - 1);
+  }
+  int op = main_op(p, q);
+  return check_expr(p, op - 1) && check_expr(op + 1, q);
 }
 
 uint32_t expr(char *e, bool *success) {
@@ -299,7 +257,7 @@ uint32_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  if (!check_expr()) {
+  if (!check_expr(0, nr_token - 1)) {
     Log("Illegal expression");
     *success = false;
     return  0;
