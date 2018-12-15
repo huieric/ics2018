@@ -5,6 +5,7 @@
  */
 #include <sys/types.h>
 #include <regex.h>
+#include <stdlib.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_DEC,
@@ -106,32 +107,34 @@ static bool make_token(char *e) {
   return true;
 }
 
-bool check_parentheses(const char* e, int p, int q) {
-  if (e[p] != '(' || e[q] != ')') {
+bool check_parentheses(int p, int q) {
+  if (tokens[p].type != '(' || tokens[q].type != ')') {
     return false;
   }
+  
+  //成对括号中间至少有一个token
+  assert(q - p >= 2);
 
   int iStackSize = 0;
-  for (int i = p + 1; i < q; i++) {
-    if (e[i] == '(') {
+  for (int i = p + 1; i <= q - 1; i++) {
+    if (tokens[i].type == '(') {
       iStackSize++;
     }
-    if (e[i] == ')') {
+    if (tokens[i].type == ')') {
       iStackSize--;
     }
-
     if (iStackSize < 0) {
       return false;
-    }    
+    }
   }
-
   if (iStackSize != 0) {
     return false;
   }
+
   return true;
 }
 
-uint32_t eval(const char* e, int p, int q) {
+uint32_t eval(int p, int q) {
   if (p > q) {
     Assert(0, "Bad expression");
     return 0;
@@ -139,40 +142,36 @@ uint32_t eval(const char* e, int p, int q) {
   else if (p == q) {
     /* Single token */
     Log("Single token at %d", p);
-    return e[p] - '0';
+    return atoi(tokens[p].str);
   }
-  else if (e[p] == ' ' || e[q] == ' ') {
-    Log("remove whitespace at %d and %d", p, q);
-    while (e[p] == ' ') p++;
-    while (e[q] == ' ') q--;
-    return eval(e, p, q);
+  else if (tokens[p].type == TK_NOTYPE) {
+    Log("remove whitespace at %d", p);
+    return eval(p + 1, q);
   }
-  else if (check_parentheses(e, p, q) == true) {
+  else if (tokens[q].type == TK_NOTYPE) {
+    Log("remove whitespace at %d", q);
+    return eval(p, q - 1);
+  }
+  else if (check_parentheses(p, q) == true) {
     /* surrounded by a matched pair of parentheses */
     Log("remove a pair of parentheses at %d and %d", p, q);
-    return eval(e, p + 1, q - 1);
+    return eval(p + 1, q - 1);
   }
-  else {
+  else { //寻找主运算符
     int op = 0;
-    for (int i = 0, pos = 0; i < nr_token; i++, pos += strlen(tokens[i].str)) {
-      if (pos > q) {
-	Assert(0, "failed to find main operator");
-	return 0;
-      }      
-      if (pos < p) {
-	continue;
-      }
 
-      assert(p <= pos && pos <= q);
+    //算数运算符都是二元运算符
+    assert(q - p >= 2);
 
+    for (int i = p + 1; i <= q - 1; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
 	  tokens[i].type != '*' && tokens[i].type != '/') {
 	continue;
       }
-      //在一对括号里面吗？
+      //在一对括号中吗？
       bool bInParens = false;
-      for (int j = pos; j >= p && e[j] != ')'; j--) {
-	if (e[j] == '(') {
+      for (int j = i; j >= p && tokens[j].type != ')'; j--) {
+	if (tokens[j].type == '(') {
 	  bInParens = true;
 	  break;
 	}
@@ -180,19 +179,19 @@ uint32_t eval(const char* e, int p, int q) {
       if (bInParens) {
 	continue;
       }
-      //后面有没有优先级更低的？
+      //后面有优先级更低的吗？
       if (tokens[i].type == '*' || tokens[i].type == '/') {
-	int iStackSize = 0;
 	bool bHasLower = false;
-	for (int j = pos; j <= q; j++) {
-	  if (e[j] == '(') {
+	int iStackSize = 0;
+	for (int j = i; j <= q; j++) {
+	  if (tokens[j].type == '(') {
 	    iStackSize++;
 	  }
-	  if (e[j] == ')') {
+	  if (tokens[j].type == ')') {
 	    iStackSize--;
 	  }
 	  assert(iStackSize >= 0);
-	  if (iStackSize == 0 && (e[j] == '+' || e[j] == '-')) {
+	  if (iStackSize == 0 && (tokens[j].type == '+' || tokens[j].type == '-')) {
 	    bHasLower = true;
 	    break;
 	  }
@@ -201,17 +200,17 @@ uint32_t eval(const char* e, int p, int q) {
 	  continue;
 	}
       }
-      
-      op = pos;
+
+      op = i;
       break;
-    }
-    
+    }      
+
     assert(p < op && op < q);
     Log("main operator at %d", op);
 
-    int op_type = e[op];
-    uint32_t val1 = eval(e, p, op - 1);
-    uint32_t val2 = eval(e, op + 1, q);
+    int op_type = tokens[op].type;
+    uint32_t val1 = eval(p, op - 1);
+    uint32_t val2 = eval(op + 1, q);
 
     switch (op_type) {
       case '+': return val1 + val2;
@@ -223,24 +222,51 @@ uint32_t eval(const char* e, int p, int q) {
   }
 }
 
-bool check_expr(const char* e) {
-  //check parentheses
-  int iStackSize = 0;
+bool check_expr() {
+  //括号检查
+  //1. 括号要成对、匹配
+  //2. 成对的括号中间至少有一个token
+  int stack[32] = { -1 };
+  int top = 0;
   for (int i = 0; i < nr_token; i++) {
     if (tokens[i].type == '(') {
-      iStackSize++;
+      stack[top++] = i;
     }
     if (tokens[i].type == ')') {
-      iStackSize--;
-    }
-    if (iStackSize < 0) {
-      Log("unmatched right paren");
-      return false;
+      assert(top >= 0);
+      if (top == 0) {
+	return false;
+      }      
+      if (i - stack[top - 1] <= 1) {
+	return false;
+      }
+      stack[--top] = -1;
     }
   }
-  if (iStackSize != 0) {
-    Log("left parens != right parens");
+  if (top != 0) {
     return false;
+  }
+  
+  //运算符检查
+  //1. 算术运算符相邻的两个token必须是数字（除去空格）
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '+' || tokens[i].type == '-' ||
+	tokens[i].type == '*' || tokens[i].type == '/') {
+      int left = i - 1;
+      while (left >= 0 && tokens[left].type == TK_NOTYPE) {
+	left--;
+      }
+      if (left < 0 || tokens[left].type != TK_DEC) {
+	return false;
+      }
+      int right = i + 1;
+      while (right < nr_token && tokens[right].type == TK_NOTYPE) {
+	right++;
+      }
+      if (right >= nr_token || tokens[right].type != TK_DEC) {
+	return false;
+      }
+    }
   }
 
   return true;
@@ -252,11 +278,12 @@ uint32_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  if (!check_expr(e)) {
+  if (!check_expr()) {
     Log("Illegal expression");
     *success = false;
     return  0;
   }
-    
-  return eval(e, 0, strlen(e) - 1);
+  
+  //保证表达式合法 
+  return eval(0, nr_token - 1);
 }
