@@ -209,8 +209,12 @@ uint32_t eval(int p, int q) {
     Log("main operator at %d", op);
 
     int op_type = tokens[op].type;
-    uint32_t val1 = eval(p, op - 1);
     uint32_t val2 = eval(op + 1, q);
+    if (op_type == '-' && op == p) {
+      Log("unary minus at %d", op);
+      return -val2;
+    }
+    uint32_t val1 = eval(p, op - 1);
 
     switch (op_type) {
       case '+': return val1 + val2;
@@ -254,7 +258,7 @@ bool check_expr() {
   //运算符检查
   //1. 算术运算符相邻的两个token必须是数字（除去空格）
   for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '+' || tokens[i].type == '-' ||
+    if (tokens[i].type == '+' ||
 	tokens[i].type == '*' || tokens[i].type == '/') {
       int left = i - 1;
       while (left >= 0 && (tokens[left].type == TK_NOTYPE || 
@@ -267,14 +271,18 @@ bool check_expr() {
 	    tokens[i].type, i);
 	return false;
       }
+      
+    }
+    if (tokens[i].type == '+' || tokens[i].type == '-' || 
+	tokens[i].type == '*' || tokens[i].type == '/') {
       int right = i + 1;
-      while (right < nr_token && (tokens[right].type == TK_NOTYPE ||
-				  tokens[right].type == '(' || 
+      while (right < nr_token && (tokens[right].type == TK_NOTYPE || 
+				  tokens[right].type == '(' ||
 				  tokens[right].type == ')')) {
 	right++;
       }
       if (right >= nr_token || tokens[right].type != TK_DEC) {
-	Log("Rightmost token of operator %c at %d should be a number", 
+	Log("Rightmost token of operator %c at %d should be a number",
 	    tokens[i].type, i);
 	return false;
       }
