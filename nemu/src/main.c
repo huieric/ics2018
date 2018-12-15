@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) {
   while (fscanf(fp, "%u ", &result) != 0) {
     char e[65536];
     fgets(e, 65536, fp);
+    e[strlen(e) - 1] = 0;
     bool success;
-    printf("%u %s", result, e);
     if (result != expr(e, &success)) {
       printf("%u %s", result, e);
     }
