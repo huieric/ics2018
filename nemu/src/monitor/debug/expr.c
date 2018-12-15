@@ -260,6 +260,7 @@ bool check_expr() {
       while (left >= 0 && tokens[left].type == TK_NOTYPE) {
 	left--;
       }
+      Log("left = %d, tokens[left].type = %d", left, tokens[left].type);
       if (left < 0 || tokens[left].type != TK_DEC) {
 	Log("Leftmost token of operator %c at %d should be a number", 
 	    tokens[i].type, i);
