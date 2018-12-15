@@ -141,7 +141,7 @@ bool check_parentheses(int p, int q) {
 
 int main_op(int p, int q) {
     int op = 0;
-    for (int i = p + 1; i <= q - 1; i++) {
+    for (int i = p; i <= q; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
 	  tokens[i].type != '*' && tokens[i].type != '/') {
 	continue;
@@ -177,9 +177,9 @@ int main_op(int p, int q) {
 	if (bHasLower) {
 	  continue;
 	}
-	op = i;
-	break;
       }
+      op = i;
+      break;
     }
 
     assert(p <= op && op < q);
