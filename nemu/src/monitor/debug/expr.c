@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_DEC,
+  TK_NOTYPE = 256, TK_EQ, TK_DEC, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEREF, TK_UMINUS,
 
   /* TODO: Add more token types */
 
@@ -25,6 +25,8 @@ static struct rule {
 
   {" +", TK_NOTYPE},    // spaces
   {"^-?[1-9][0-9]*", TK_DEC},
+  {"^0x[1-9,a-z,A-Z][0-9,a-z,A-Z]*", TK_HEX},
+  {"^\\$[a-z]+", TK_REG},
   {"\\+", '+'},         // plus
   {"-", '-'},
   {"\\*", '*'},
@@ -32,6 +34,8 @@ static struct rule {
   {"\\(", '('},
   {"\\)", ')'},
   {"==", TK_EQ},         // equal
+  {"!=", TK_NEQ},
+  {"&&", TK_AND},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -146,7 +150,10 @@ int main_op(int p, int q) {
   int top = 0;  
   for (int i = p; i <= q; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
-	  tokens[i].type != '*' && tokens[i].type != '/') {
+	  tokens[i].type != '*' && tokens[i].type != '/' &&
+	  tokens[i].type != TK_EQ && tokens[i].type != TK_NEQ &&
+	  tokens[i].type != TK_AND && tokens[i].type != TK_DEREF &&
+	  tokens[i].type != TK_UMINUS) {
 	continue;
       }
       //在一对括号中吗？
@@ -165,11 +172,27 @@ int main_op(int p, int q) {
   
   int op = -1;  
   if (top > 0) { 
-    op = op_stack[top - 1];
+    int priority = 4;
     for (int i = top - 1; i >= 0; i--) {
-      if (tokens[op_stack[i]].type == '+' || tokens[op_stack[i]].type == '-') {
+      if ((tokens[op_stack[i]].type == TK_EQ || tokens[op_stack[i]].type == TK_NEQ ||
+	  tokens[op_stack[i]].type == TK_AND) && priority > 0) {
 	op = op_stack[i];
-	break;
+	priority = 0;
+      }
+      if ((tokens[op_stack[i]].type == '+' || tokens[op_stack[i]].type == '-') &&
+	  priority > 1) {
+	op = op_stack[i];
+	priority = 1;
+      }
+      if ((tokens[op_stack[i]].type == '*' || tokens[op_stack[i]].type == '/') &&
+	  priority > 2) {
+	op = op_stack[i];
+	priority = 2;
+      }
+      if ((tokens[op_stack[i]].type == TK_DEREF || tokens[op_stack[i]].type == TK_UMINUS) &&
+	  priority > 3) {
+	op = op_stack[i];
+	priority = 3;
       }
     }
   }
@@ -184,7 +207,32 @@ uint32_t eval(int p, int q) {
   else if (p == q) {
     /* Single token */
     Log("Single token at %d", p);
-    return atoi(tokens[p].str);
+    if (tokens[p].type == TK_HEX) {
+      return strtol(tokens[p].str, NULL, 16);
+    }
+    if (tokens[p].type == TK_DEC) {
+      return atoi(tokens[p].str);
+    }
+    if (tokens[p].type == TK_REG) {
+      for (int i = R_EAX; i <= R_EDI; i++) {
+	if (strcmp(tokens[p].str + 1, regsl[i]) == 0) {
+	  return reg_l(i);
+	}
+      }
+      for (int i = R_AX; i <= R_DI; i++) {
+	if (strcmp(tokens[p].str + 1, regsw[i]) == 0) {
+	  return reg_w(i);
+	}
+      }
+      for (int i = R_AL; i <= R_BH; i++) {
+	if (strcmp(tokens[p].str + 1, regsb[i]) == 0) {
+	  return reg_b(i);
+	}
+      }
+      assert(0);      
+    }
+    //unreachable
+    assert(0);
   }
   else if (tokens[p].type == TK_NOTYPE) {
     Log("remove whitespace at %d", p);
@@ -204,9 +252,15 @@ uint32_t eval(int p, int q) {
     assert(p <= op && op < q);
     int op_type = tokens[op].type;
     Log("main operator %c at %d", op_type, op);
-    if (op_type == '-' && op == p) {
+    if (op_type == TK_UMINUS) {
       Log("unary minus at %d", op);
+      assert(op == p);
       return -eval(op + 1, q);
+    }
+    if (op_type == TK_DEREF) {
+      Log("unary deref at %d", op);
+      assert(op == p);
+      return vaddr_read(eval(op + 1, q), 4);
     }
     uint32_t val1 = eval(p, op - 1);
     uint32_t val2 = eval(op + 1, q);
@@ -217,6 +271,9 @@ uint32_t eval(int p, int q) {
       case '-': return val1 - val2;
       case '*': return val1 * val2;
       case '/': return val1 / val2;
+      case TK_EQ: return val1 == val2;
+      case TK_NEQ: return val1 != val2;
+      case TK_AND: return val1 && val2;
       default: Assert(0, "Unknown op type!");
     }
   }
@@ -267,12 +324,27 @@ uint32_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  if (!check_expr(0, nr_token - 1)) {
-    Log("Illegal expression");
-    *success = false;
-    return  0;
+  for (int i = 0; i < nr_token; i++) {
+    int prev = i - 1; 
+    while (prev >= 0 && tokens[prev].type == TK_NOTYPE) prev--;
+    if (i == 0 || tokens[prev].type == '(' || tokens[prev].type == '+' || 
+	tokens[prev].type == '-' || tokens[prev].type == '*' ||
+	tokens[prev].type == '/' || tokens[prev].type == TK_EQ || 
+	tokens[prev].type == TK_NEQ || tokens[prev].type == TK_AND) {
+      if (tokens[i].type == '-') {
+	tokens[i].type = TK_UMINUS;
+      }
+      if (tokens[i].type == '*') {
+	tokens[i].type = TK_DEREF;
+      }
+    }
   }
-  
+  /*if (!check_expr(0, nr_token - 1)) {*/
+    /*Log("Illegal expression");*/
+    /**success = false;*/
+    /*return  0;*/
+  /*}*/
+ 
   //保证表达式合法 
   return eval(0, nr_token - 1);
 }
