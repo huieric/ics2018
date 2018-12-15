@@ -140,8 +140,9 @@ bool check_parentheses(int p, int q) {
 }
 
 int main_op(int p, int q) {
-    int op = 0;
-    for (int i = p; i <= q; i++) {
+  int op_stack[32] = { -1 };
+  int top = 0;  
+  for (int i = p; i <= q; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
 	  tokens[i].type != '*' && tokens[i].type != '/') {
 	continue;
@@ -157,31 +158,16 @@ int main_op(int p, int q) {
       if (bInParens) {
 	continue;
       }
-      //后面有优先级更低的吗？
-      if (tokens[i].type == '*' || tokens[i].type == '/') {
-	bool bHasLower = false;
-	int iStackSize = 0;
-	for (int j = i; j <= q; j++) {
-	  if (tokens[j].type == '(') {
-	    iStackSize++;
-	  }
-	  if (tokens[j].type == ')') {
-	    iStackSize--;
-	  }
-	  assert(iStackSize >= 0);
-	  if (iStackSize == 0 && (tokens[j].type == '+' || tokens[j].type == '-')) {
-	    bHasLower = true;
-	    break;
-	  }
-	}
-	if (bHasLower) {
-	  continue;
-	}
-      }
-      op = i;
-      break;
+      op_stack[top++] = i;
     }
-
+    
+    int op = op_stack[top - 1];
+    for (int i = top - 1; i >= 0; i--) {
+      if (tokens[i].type == '+' || tokens[i].type == '-') {
+	op = op_stack[i];
+	break;
+      }
+    }
     assert(p <= op && op < q);
     return op;
 }
