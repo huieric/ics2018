@@ -213,12 +213,12 @@ uint32_t eval(int p, int q) {
     int op = main_op(p, q);
     int op_type = tokens[op].type;
     Log("main operator %c at %d", op_type, op);
-    uint32_t val2 = eval(op + 1, q);
     if (op_type == '-' && op == p) {
       Log("unary minus at %d", op);
-      return -val2;
+      return -eval(op + 1, q);
     }
     uint32_t val1 = eval(p, op - 1);
+    uint32_t val2 = eval(op + 1, q);
     
     Log("%u %c %u", val1, op_type, val2);
     switch (op_type) {
