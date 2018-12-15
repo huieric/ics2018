@@ -94,6 +94,11 @@ static bool make_token(char *e) {
         }
 	
 	nr_token++;
+	if (nr_token > 32) {
+	  Log("Too many tokens");
+	  return false;
+	}
+
         break;
       }
     }
