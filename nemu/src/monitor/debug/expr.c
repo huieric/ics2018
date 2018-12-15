@@ -23,14 +23,14 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
+  {"^-?[1-9][0-9]*", TK_DEC},
   {"\\+", '+'},         // plus
-  {"==", TK_EQ},         // equal
   {"-", '-'},
   {"\\*", '*'},
   {"/", '/'},
   {"\\(", '('},
   {"\\)", ')'},
-  {"^-?[1-9][0-9]*", TK_DEC},
+  {"==", TK_EQ},         // equal
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
