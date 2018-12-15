@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
     char e[65536];
     fgets(e, 65536, fp);
     bool success;
+    printf("%u %s", result, e);
     if (result != expr(e, &success)) {
       printf("%u %s", result, e);
     }
