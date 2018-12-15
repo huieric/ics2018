@@ -235,15 +235,19 @@ bool check_expr() {
     if (tokens[i].type == ')') {
       assert(top >= 0);
       if (top == 0) {
+	Log("unmatched right paren at %d", i);
 	return false;
       }      
       if (i - stack[top - 1] <= 1) {
+	Log("At least one token should be in the pair of parens at (%d, %d)",
+	    stack[top - 1], i);
 	return false;
       }
       stack[--top] = -1;
     }
   }
   if (top != 0) {
+    Log("number of left parens and right parens not equal");
     return false;
   }
   
@@ -257,6 +261,8 @@ bool check_expr() {
 	left--;
       }
       if (left < 0 || tokens[left].type != TK_DEC) {
+	Log("Leftmost token of operator %c at %d should be a number", 
+	    tokens[i].type, i);
 	return false;
       }
       int right = i + 1;
@@ -264,6 +270,8 @@ bool check_expr() {
 	right++;
       }
       if (right >= nr_token || tokens[right].type != TK_DEC) {
+	Log("Leftmost token of operator %c at %d should be a number", 
+	    tokens[i].type, i);
 	return false;
       }
     }
