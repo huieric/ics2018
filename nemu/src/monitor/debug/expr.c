@@ -232,7 +232,7 @@ bool check_expr(int p, int q) {
       return false;
     }
   }
-  if (tokens[p].type == '(' && tokens[q].type == ')') {
+  if (check_parentheses(p, q) == true) {
     Log("A pair of parens at (%d, %d)", p, q);
     return check_expr(p + 1, q - 1);
   }
