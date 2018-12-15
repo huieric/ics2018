@@ -6,9 +6,49 @@
 #include <string.h>
 
 // this should be enough
-static char buf[65536];
+static char buf[65536] = { 0 };
+static const int max_whitespace_num = 5;
+static const int gen_buf_limit = 65536 / 3; //保证不会溢出
+
+static inline uint32_t choose(uint32_t n) {
+  return rand() % n;
+}
+
+void gen_rand_whitespace() { //随机插入空格
+  for (int i = 0; i <= choose(max_whitespace_num); i++) {
+    sprintf(buf, " ");
+  }
+}
+
+void gen(char* str) {
+  sprintf(buf, "%s", str);
+  gen_rand_whitespace();
+}
+
+void gen_num() {
+  sprintf(buf, "%du", rand()); //保证表达式进行无符号运算
+  gen_rand_whitespace();
+}
+
+void gen_rand_op() {
+  switch (choose(4)) {
+    case 0: gen("+"); break;
+    case 1: gen("-"); break;
+    case 2: gen("*"); break;
+    default: gen("/"); break;
+  }
+}
+
 static inline void gen_rand_expr() {
-  buf[0] = '\0';
+  if (strlen(buf) > gen_buf_limit) {
+    gen_num();
+    return;
+  }
+  switch (choose(3)) {
+    case 0: gen_num(); break;
+    case 1: gen("("); gen_rand_expr(); gen(")"); break;
+    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
 }
 
 static char code_buf[65536];
