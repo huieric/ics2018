@@ -219,7 +219,8 @@ uint32_t eval(int p, int q) {
       return -val2;
     }
     uint32_t val1 = eval(p, op - 1);
-
+    
+    Log("%u %c %u", val1, op_type, val2);
     switch (op_type) {
       case '+': return val1 + val2;
       case '-': return val1 - val2;
