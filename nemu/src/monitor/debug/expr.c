@@ -161,6 +161,7 @@ int main_op(int p, int q) {
       op_stack[top++] = i;
     }
     
+    Log("op_stack size = %d", top);
     int op = op_stack[top - 1];
     for (int i = top - 1; i >= 0; i--) {
       if (tokens[i].type == '+' || tokens[i].type == '-') {
