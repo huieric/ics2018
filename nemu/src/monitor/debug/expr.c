@@ -160,16 +160,18 @@ int main_op(int p, int q) {
       }
       op_stack[top++] = i;
     }
-    
-    int op = op_stack[top - 1];
+  
+  int op = -1;  
+  if (top > 0) { 
+    op = op_stack[top - 1];
     for (int i = top - 1; i >= 0; i--) {
       if (tokens[op_stack[i]].type == '+' || tokens[op_stack[i]].type == '-') {
 	op = op_stack[i];
 	break;
       }
     }
-    assert(p <= op && op < q);
-    return op;
+  }
+  return op;
 }
 
 uint32_t eval(int p, int q) {
@@ -197,6 +199,7 @@ uint32_t eval(int p, int q) {
   }
   else { //寻找主运算符
     int op = main_op(p, q);
+    assert(p <= op && op < q);
     int op_type = tokens[op].type;
     Log("main operator %c at %d", op_type, op);
     if (op_type == '-' && op == p) {
@@ -219,9 +222,15 @@ uint32_t eval(int p, int q) {
 
 bool check_expr(int p, int q) {
   assert(p <= q);
-  if (p == q && tokens[p].type == TK_DEC) {
-    Log("Single number at %d", p);
-    return true;
+  if (p == q) {
+    if (tokens[p].type == TK_DEC) {
+      Log("Single number at %d", p);
+      return true;
+    }
+    else {
+      Log("Illegal expr at %d", p);
+      return false;
+    }
   }
   if (tokens[p].type == '(' && tokens[q].type == ')') {
     Log("A pair of parens at (%d, %d)", p, q);
@@ -236,6 +245,10 @@ bool check_expr(int p, int q) {
     return check_expr(p, q - 1);
   }
   int op = main_op(p, q);
+  if (op == -1) {
+    Log("cannot find main operator");
+    return false;
+  }
   if (op == p) {
     Log("unary minus at %d", op);
     return (tokens[op].type == '-') && check_expr(op + 1, q);
