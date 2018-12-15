@@ -159,10 +159,6 @@ uint32_t eval(int p, int q) {
   }
   else { //寻找主运算符
     int op = 0;
-
-    //算数运算符都是二元运算符
-    assert(q - p >= 2);
-
     for (int i = p + 1; i <= q - 1; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
 	  tokens[i].type != '*' && tokens[i].type != '/') {
@@ -205,7 +201,7 @@ uint32_t eval(int p, int q) {
       break;
     }      
 
-    assert(p < op && op < q);
+    assert(p <= op && op < q);
     Log("main operator at %d", op);
 
     int op_type = tokens[op].type;
