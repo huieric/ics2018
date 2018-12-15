@@ -60,7 +60,9 @@ typedef struct token {
   char str[32];
 } Token;
 
-Token tokens[32];
+#define max_token_num 65536
+
+Token tokens[max_token_num];
 int nr_token;
 
 static bool make_token(char *e) {
@@ -94,7 +96,7 @@ static bool make_token(char *e) {
         }
 	
 	nr_token++;
-	if (nr_token > 32) {
+	if (nr_token > max_token_num) {
 	  Log("Too many tokens");
 	  return false;
 	}
@@ -140,7 +142,7 @@ bool check_parentheses(int p, int q) {
 }
 
 int main_op(int p, int q) {
-  int op_stack[32] = { -1 };
+  int op_stack[max_token_num] = { -1 };
   int top = 0;  
   for (int i = p; i <= q; i++) {
       if (tokens[i].type != '+' && tokens[i].type != '-' &&
