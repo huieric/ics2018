@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
   FILE* fp = fopen("../tools/gen-expr/input", "r");
   assert(fp != NULL);
   int result;
-  while (fscanf(fp, "%u", &result) != 0) {
+  while (fscanf(fp, "%u ", &result) != 0) {
     char e[65536];
     fgets(e, 65536, fp);
     bool success;
@@ -26,5 +26,6 @@ int main(int argc, char *argv[]) {
       printf("%u %s", result, e);
     }
   }
+  fclose(fp);
   return 0;
 }
