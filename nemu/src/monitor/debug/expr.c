@@ -257,21 +257,24 @@ bool check_expr() {
     if (tokens[i].type == '+' || tokens[i].type == '-' ||
 	tokens[i].type == '*' || tokens[i].type == '/') {
       int left = i - 1;
-      while (left >= 0 && tokens[left].type == TK_NOTYPE) {
+      while (left >= 0 && (tokens[left].type == TK_NOTYPE || 
+			   tokens[left].type == '(' ||
+			   tokens[left].type == ')')) {
 	left--;
       }
-      Log("left = %d, tokens[left].type = %d", left, tokens[left].type);
       if (left < 0 || tokens[left].type != TK_DEC) {
 	Log("Leftmost token of operator %c at %d should be a number", 
 	    tokens[i].type, i);
 	return false;
       }
       int right = i + 1;
-      while (right < nr_token && tokens[right].type == TK_NOTYPE) {
+      while (right < nr_token && (tokens[right].type == TK_NOTYPE ||
+				  tokens[right].type == '(' || 
+				  tokens[right].type == ')')) {
 	right++;
       }
       if (right >= nr_token || tokens[right].type != TK_DEC) {
-	Log("Leftmost token of operator %c at %d should be a number", 
+	Log("Rightmost token of operator %c at %d should be a number", 
 	    tokens[i].type, i);
 	return false;
       }
