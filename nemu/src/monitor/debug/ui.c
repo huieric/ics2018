@@ -7,7 +7,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+extern WP* head;
 void cpu_exec(uint64_t);
+WP* new_wp();
+void free_wp(int n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
@@ -91,9 +94,14 @@ static int cmd_info(char *args) {
     }
   }
   else if (strcmp(arg, "b") == 0) {
-
+    if (head == NULL) {
+      printf("No watchpoints.\n");
+      return 0;
+    }
     printf("Num     Type          Disp Enb Address          What\n");
-    
+    for (WP* p = head; p != NULL; p = p->next) {
+      printf("%-8d%-14s%-5s%-4s%-17s%s\n", p->NO, "hw watchpoint", "keep", "y", "", p->expr);
+    }
   }
   else {
     printf("Unknown subcommand '%s'\n", arg);
@@ -105,7 +113,7 @@ static int cmd_info(char *args) {
 static int cmd_p(char *args) {
   char* arg = args;
   if (arg == NULL) {
-    Log("One argument should be provided!\n");
+    printf("One argument should be provided!\n");
     return 0;
   }
 
@@ -132,14 +140,14 @@ static int cmd_x(char *args) {
   int n = atoi(arg1);
   for (i = 0; i < n; i+=4) {
     if (i + 4 < n) {      
-      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, paddr_read(addr, 4), 
-	  paddr_read(addr + 4, 4), paddr_read(addr + 8, 4), paddr_read(addr + 12, 4));
+      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, vaddr_read(addr, 4), 
+	  vaddr_read(addr + 4, 4), vaddr_read(addr + 8, 4), vaddr_read(addr + 12, 4));
     }
     else {
       int j;
       printf("0x%-10x : ", addr);
       for (j = 0; j < n - i; j++) {	
-	printf("0x%-15x", paddr_read(addr, 4));
+	printf("0x%-15x", vaddr_read(addr, 4));
 	addr += 4;
       }
       printf("\n");
@@ -152,10 +160,38 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_w(char *args) {
+  char* arg = args;
+  if (arg == NULL) {
+    printf("One argument should be provided\n");
+    return 0;
+  }
+  
+  WP* wp = new_wp();
+ 
+  wp->expr = (char*)malloc(strlen(arg) + 1);
+  strcpy(wp->expr, arg);
+  wp->expr[strlen(wp->expr) - 1] = 0;
+  
+  bool success = true;
+  uint32_t val = expr(wp->expr, &success);
+  if (!success) {
+    printf("Bad expression\n");
+    return 0;
+  }
+  wp->val = val; 
+   
   return 0;
 }
 
 static int cmd_d(char *args) {
+  char* arg = args;
+  if (arg == NULL) {
+    printf("One argument should be provided\n");
+    return 0;
+  }
+  int n = atoi(arg);
+  free_wp(n);
+
   return 0;
 }
 
