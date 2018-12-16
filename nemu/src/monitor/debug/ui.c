@@ -93,7 +93,7 @@ static int cmd_info(char *args) {
       printf("%-10s0x%-15x%u\n", regsb[i], reg_b(i), reg_b(i));
     }
   }
-  else if (strcmp(arg, "b") == 0) {
+  else if (strcmp(arg, "w") == 0) {
     list_wp(); 
   }
   else {
