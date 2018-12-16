@@ -69,6 +69,13 @@ typedef struct token {
 Token tokens[max_token_num];
 int nr_token;
 
+typedef struct paren {
+  int left, right;
+} Paren;
+
+Paren parens[max_token_num / 2];
+int nr_paren;
+
 static bool make_token(char *e) {
   int position = 0;
   int i;
@@ -113,6 +120,31 @@ static bool make_token(char *e) {
       printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
       return false;
     }
+  }
+
+  //匹配括号
+  int stack[max_token_num];
+  int top = 0;
+  nr_paren = 0;
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '(') {
+      stack[top++] = i;
+    }
+    if (tokens[i].type == ')') {
+      assert(top >= 0);
+      if (top == 0) {
+	printf("unmatched right paren at %d\n", i);
+	return false;
+      }
+      parens[nr_paren].left = stack[top - 1];
+      parens[nr_paren].right = i;
+      nr_paren++;
+      stack[--top] = -1;
+    }
+  }
+  if (top != 0) {
+    printf("number of left paren and right paren not equal\n");
+    return false;
   }
 
   return true;
@@ -343,6 +375,7 @@ uint32_t expr(char *e, bool *success) {
       }
     }
   }
+
   /*if (!check_expr(0, nr_token - 1)) {*/
     /*Log("Illegal expression");*/
     /**success = false;*/
