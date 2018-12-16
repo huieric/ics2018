@@ -191,7 +191,9 @@ int main_op(int p, int q) {
       //在一对括号中吗？
       bool bInParens = false;
       for (int j = 0; j < nr_paren; j++) {
-	if (parens[j].left < i && i < parens[j].right) {
+	assert(check_parentheses(p, q) == false);
+	if (p < parens[j].left && parens[j].left < i && 
+	    i < parens[j].right && parens[j].right < q) {
 	  bInParens = true;
 	}
       }
