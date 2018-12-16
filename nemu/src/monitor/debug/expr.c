@@ -151,30 +151,12 @@ static bool make_token(char *e) {
 }
 
 bool check_parentheses(int p, int q) {
-  if (tokens[p].type != '(' || tokens[q].type != ')') {
-    return false;
-  }
-  
-  //成对括号中间至少有一个token
-  assert(q - p >= 2);
-
-  int iStackSize = 0;
-  for (int i = p + 1; i <= q - 1; i++) {
-    if (tokens[i].type == '(') {
-      iStackSize++;
+  for (int i = 0; i < nr_paren; i++) {
+    if (parens[i].left == p && parens[i].right == q) {
+      return true;
     }
-    if (tokens[i].type == ')') {
-      iStackSize--;
-    }
-    if (iStackSize < 0) {
-      return false;
-    }
-  }
-  if (iStackSize != 0) {
-    return false;
-  }
-
-  return true;
+  }  
+  return false;
 }
 
 int main_op(int p, int q) {
@@ -192,8 +174,8 @@ int main_op(int p, int q) {
       bool bInParens = false;
       for (int j = 0; j < nr_paren; j++) {
 	assert(check_parentheses(p, q) == false);
-	if (p < parens[j].left && parens[j].left < i && 
-	    i < parens[j].right && parens[j].right < q) {
+	if (p <= parens[j].left && parens[j].left < i && 
+	    i < parens[j].right && parens[j].right <= q) {
 	  bInParens = true;
 	}
       }
