@@ -168,7 +168,7 @@ static int cmd_w(char *args) {
  
   wp->expr = (char*)malloc(strlen(arg) + 1);
   strcpy(wp->expr, arg);
-  wp->expr[strlen(wp->expr) - 1] = 0;
+  wp->expr[strlen(arg)] = 0;
   
   bool success = true;
   uint32_t val = expr(wp->expr, &success);
