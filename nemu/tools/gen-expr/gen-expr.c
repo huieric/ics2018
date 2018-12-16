@@ -5,10 +5,11 @@
 #include <assert.h>
 #include <string.h>
 
+#define MAX_BUF_SIZE 65535
+
 // this should be enough
 static char buf[65536];
 static const int max_whitespace_num = 5;
-static const int gen_buf_limit = 65536 / 3; //保证不会溢出
 
 static inline uint32_t choose(uint32_t n) {
   return rand() % n;
@@ -20,14 +21,22 @@ void gen_rand_whitespace() { //随机插入空格
   }
 }
 
+static inline void gen_rand_expr();
 void gen(char* str) {
+  //如果将要溢出，则重来
+  if (strlen(buf) + strlen(str) + 5 > MAX_BUF_SIZE) {
+    memset(buf, 0, sizeof(buf));
+    gen_rand_expr();
+    return;
+  }
   sprintf(buf + strlen(buf), "%s", str);
   gen_rand_whitespace();
 }
 
 void gen_num() {
-  sprintf(buf + strlen(buf), "%d", rand());
-  gen_rand_whitespace();
+  char strNum[15];
+  sprintf(strNum, "%d", rand());
+  gen(strNum);
 }
 
 void gen_rand_op() {
@@ -39,11 +48,7 @@ void gen_rand_op() {
   }
 }
 
-void gen_rand_expr() {
-  if (strlen(buf) > gen_buf_limit) {
-    gen_num();
-    return;
-  }
+static inline void gen_rand_expr() {
   switch (choose(3)) {
     case 0: gen_num(); break;
     case 1: gen("("); gen_rand_expr(); gen(")"); break;
