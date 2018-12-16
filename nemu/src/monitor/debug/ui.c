@@ -7,10 +7,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-extern WP* head;
 void cpu_exec(uint64_t);
 WP* new_wp();
 void free_wp(int n);
+void list_wp();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
@@ -94,14 +94,7 @@ static int cmd_info(char *args) {
     }
   }
   else if (strcmp(arg, "b") == 0) {
-    if (head == NULL) {
-      printf("No watchpoints.\n");
-      return 0;
-    }
-    printf("Num     Type          Disp Enb Address          What\n");
-    for (WP* p = head; p != NULL; p = p->next) {
-      printf("%-8d%-14s%-5s%-4s%-17s%s\n", p->NO, "hw watchpoint", "keep", "y", "", p->expr);
-    }
+    list_wp(); 
   }
   else {
     printf("Unknown subcommand '%s'\n", arg);

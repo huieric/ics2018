@@ -56,3 +56,30 @@ void free_wp(int n) {
     /*return;*/
   /*}*/
 }
+
+void list_wp() {
+  if (head == NULL) {
+    printf("No watchpoints.\n");
+    return;
+  }
+  printf("Num     Type          Disp Enb Address          What\n");
+  for (WP* p = head; p != NULL; p = p->next) {
+    printf("%-8d%-14s%-5s%-4s%-17s%s\n", p->NO, "hw watchpoint", "keep", "y", "", p->expr);
+  }
+}
+
+bool check_wp() {
+  bool bChanged = false;
+  for (WP* p = head; p != NULL; p = p->next) {
+    Log("check watchpoint %d: %s.", p->NO, p->expr);
+    bool success;
+    uint32_t val = expr(p->expr, &success);
+    if (val != p->val) {
+      printf("nemu: watchpoint %d expr %s changed from %u to %u\n", 
+	  p->NO, p->expr, p->val, val);
+      p->val = val;
+      bChanged = true;
+    }
+  }
+  return bChanged;
+}
