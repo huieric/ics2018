@@ -39,6 +39,7 @@ void free_wp(int n) {
   if (head->NO == n) {
     WP* wp = head->next;
     head->next = free_;
+    free_ = head;
     head = wp;
     return;
   }
@@ -48,6 +49,7 @@ void free_wp(int n) {
       WP* wp = p->next;
       p->next = wp->next;
       wp->next = free_;
+      free_ = wp;
       return;
     }
   }
