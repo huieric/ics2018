@@ -123,11 +123,16 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_x(char *args) {
-  const char* arg1 = strtok(args, " ");
-  const char* arg2 = strtok(NULL, " ");
+  char* arg1 = strtok(args, " ");
+  char* arg2 = strtok(NULL, " ");
 
   /* TODO: calc the expr */
-  paddr_t addr = strtol(arg2, NULL, 16);
+  bool success = true;
+  paddr_t addr = expr(arg2, &success);
+  if (success == false) {
+    printf("Bad expression.\n");
+    return 0;
+  }
 
   int i;
   int n = atoi(arg1);
