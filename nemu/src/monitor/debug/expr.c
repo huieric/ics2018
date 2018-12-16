@@ -248,6 +248,9 @@ uint32_t eval(int p, int q) {
 	  return reg_b(i);
 	}
       }
+      if (strcmp(tokens[p].str + 1, "eip") == 0) {
+	return cpu.eip;
+      }
       assert(0);      
     }
     //unreachable
