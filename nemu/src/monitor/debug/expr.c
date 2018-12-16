@@ -190,10 +190,9 @@ int main_op(int p, int q) {
       }
       //在一对括号中吗？
       bool bInParens = false;
-      for (int j = i; j >= p && tokens[j].type != ')'; j--) {
-	if (tokens[j].type == '(') {
+      for (int j = 0; j < nr_paren; j++) {
+	if (parens[j].left < i && i < parens[j].right) {
 	  bInParens = true;
-	  break;
 	}
       }
       if (bInParens) {
