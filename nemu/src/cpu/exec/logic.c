@@ -14,7 +14,6 @@ make_EHelper(and) {
 }
 
 make_EHelper(xor) {
-  Log("dest: %x, src: %x\n", id_dest->val, id_src->val);
   rtl_xor(&id_dest->val, &id_dest->val, &id_src->val);
 
   print_asm_template2(xor);
