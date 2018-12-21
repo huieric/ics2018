@@ -41,8 +41,10 @@ static inline make_DopHelper(SI) {
    *
    op->simm = ???
    */
-  int32_t simm = instr_fetch(eip, op->width);
-  op->simm = simm;
+  op->simm = instr_fetch(eip, op->width);
+  if (op->width == 1) {
+    op->simm |= 0xffffff00;
+  }
 
   rtl_li(&op->val, op->simm);
 
