@@ -78,7 +78,6 @@ static inline void interpret_rtl_idiv64_r(rtlreg_t* dest,
 }
 
 static inline void interpret_rtl_lm(rtlreg_t *dest, const rtlreg_t* addr, int len) {
-  Log("%x", *addr);
   *dest = vaddr_read(*addr, len);
 }
 
