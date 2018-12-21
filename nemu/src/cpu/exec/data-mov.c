@@ -31,6 +31,8 @@ make_EHelper(leave) {
   int width = decoding.is_operand_size_16 ? 2 : 4;
   rtl_lr(&t0, R_EBP, width);
   rtl_sr(R_ESP, &t0, width);
+  rtl_pop(&t0);
+  rtl_sr(R_EBP, &t0, width);
 
   print_asm("leave");
 }
