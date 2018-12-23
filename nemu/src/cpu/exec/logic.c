@@ -2,7 +2,6 @@
 #include "cpu/cc.h"
 
 make_EHelper(test) {
-  Log("0x%8x 0x%8x", id_dest->val, id_src->val);
   rtl_and(&t0, &id_dest->val, &id_src->val);
 
   rtl_update_ZFSF(&t0, id_dest->width);
