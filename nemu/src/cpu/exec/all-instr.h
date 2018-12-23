@@ -22,3 +22,4 @@ make_EHelper(jcc);
 make_EHelper(movzx);
 make_EHelper(test);
 make_EHelper(leave);
+make_EHelper(adc);
