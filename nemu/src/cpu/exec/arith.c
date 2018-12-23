@@ -61,7 +61,8 @@ make_EHelper(inc) {
 }
 
 make_EHelper(dec) {
-  TODO();
+  rtl_subi(&t0, &id_dest->val, 1);
+  operand_write(id_dest, &t0);
 
   print_asm_template1(dec);
 }
