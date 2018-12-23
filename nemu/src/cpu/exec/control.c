@@ -33,9 +33,7 @@ make_EHelper(call) {
 }
 
 make_EHelper(ret) {
-  rtl_pop(&t0);
-  *eip = t0;
-  Log("%x %x", t0, *eip);
+  rtl_pop(&cpu.eip);
   print_asm("ret");
 }
 
