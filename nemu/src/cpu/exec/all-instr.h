@@ -32,3 +32,4 @@ make_EHelper(inc);
 make_EHelper(imul1);
 make_EHelper(imul2);
 make_EHelper(imul3);
+make_EHelper(cwtl);
