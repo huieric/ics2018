@@ -37,6 +37,8 @@ typedef struct {
     uint8_t OF :1;
   };
 
+  uint16_t cs;
+
 } CPU_state;
 
 extern CPU_state cpu;

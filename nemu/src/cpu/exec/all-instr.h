@@ -36,3 +36,4 @@ make_EHelper(cwtl);
 make_EHelper(idiv);
 make_EHelper(jmp);
 make_EHelper(movsx);
+make_EHelper(call_rm);
