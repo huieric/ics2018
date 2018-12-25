@@ -77,4 +77,29 @@ int memcmp(const void* s1, const void* s2, size_t n){
   return 0;
 }
 
+char* itoa(int d, char* str) {
+  int sign = d < 0 ? 1 : 0;
+  char buf[4096] = { 0 };
+  char* p = buf;
+  if (sign) {
+    *p++ = '-';
+  }
+  while (d) {
+    *p++ = (d % 10) + '0';
+    d /= 10;
+  }
+  return strcpy_rev(str, buf);
+}
+
+char* strcpy_rev(char* dst, const char* src) {
+  char* p_dst = dst;
+  const char* p_src = src + strlen(src);
+  for (size_t i = 0; i < strlen(src); i++, p_dst++) {
+    p_src--;
+    *p_dst = *p_src;
+  }
+  *p_dst = 0;
+  return dst;
+}
+
 #endif
