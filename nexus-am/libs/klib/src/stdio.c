@@ -21,7 +21,6 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   char buf[4096] = { 0 };
   len = 0;
   while (*fmt) {
-    _putc(*fmt);
     if (*fmt == '%') {
       int n;
       switch (*(fmt + 1)) {
