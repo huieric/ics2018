@@ -92,8 +92,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        /*Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",*/
+            /*i, rules[i].regex, position, substr_len, substr_len, substr_start);*/
         position += substr_len;
 	
 	if (substr_len >= 32)
@@ -110,7 +110,7 @@ static bool make_token(char *e) {
 	
 	nr_token++;
 	if (nr_token > max_token_num) {
-	  Log("Too many tokens");
+	  /*Log("Too many tokens");*/
 	  return false;
 	}
 
@@ -227,7 +227,7 @@ uint32_t eval(int p, int q) {
   }
   else if (p == q) {
     /* Single token */
-    Log("Single token at %d", p);
+    /*Log("Single token at %d", p);*/
     if (tokens[p].type == TK_HEX) {
       return strtol(tokens[p].str, NULL, 16);
     }
@@ -259,37 +259,37 @@ uint32_t eval(int p, int q) {
     assert(0);
   }
   else if (tokens[p].type == TK_NOTYPE) {
-    Log("remove whitespace at %d", p);
+    /*Log("remove whitespace at %d", p);*/
     return eval(p + 1, q);
   }
   else if (tokens[q].type == TK_NOTYPE) {
-    Log("remove whitespace at %d", q);
+    /*Log("remove whitespace at %d", q);*/
     return eval(p, q - 1);
   }
   else if (check_parentheses(p, q) == true) {
     /* surrounded by a matched pair of parentheses */
-    Log("remove a pair of parentheses at %d and %d", p, q);
+    /*Log("remove a pair of parentheses at %d and %d", p, q);*/
     return eval(p + 1, q - 1);
   }
   else { //寻找主运算符
     int op = main_op(p, q);
     assert(p <= op && op < q);
     int op_type = tokens[op].type;
-    Log("main operator %c at %d", op_type, op);
+    /*Log("main operator %c at %d", op_type, op);*/
     if (op_type == TK_UMINUS) {
-      Log("unary minus at %d", op);
+      /*Log("unary minus at %d", op);*/
       assert(op == p);
       return -eval(op + 1, q);
     }
     if (op_type == TK_DEREF) {
-      Log("unary deref at %d", op);
+      /*Log("unary deref at %d", op);*/
       assert(op == p);
       return vaddr_read(eval(op + 1, q), 4);
     }
     uint32_t val1 = eval(p, op - 1);
     uint32_t val2 = eval(op + 1, q);
     
-    Log("%u %c %u", val1, op_type, val2);
+    /*Log("%u %c %u", val1, op_type, val2);*/
     switch (op_type) {
       case '+': return val1 + val2;
       case '-': return val1 - val2;
@@ -307,33 +307,33 @@ bool check_expr(int p, int q) {
   assert(p <= q);
   if (p == q) {
     if (tokens[p].type == TK_DEC) {
-      Log("Single number at %d", p);
+      /*Log("Single number at %d", p);*/
       return true;
     }
     else {
-      Log("Illegal expr at %d", p);
+      /*Log("Illegal expr at %d", p);*/
       return false;
     }
   }
   if (check_parentheses(p, q) == true) {
-    Log("A pair of parens at (%d, %d)", p, q);
+    /*Log("A pair of parens at (%d, %d)", p, q);*/
     return check_expr(p + 1, q - 1);
   }
   if (tokens[p].type == TK_NOTYPE) {
-    Log("Left whitespace at %d", p);
+    /*Log("Left whitespace at %d", p);*/
     return check_expr(p + 1, q);
   }
   if (tokens[q].type == TK_NOTYPE) {
-    Log("Right whitespace at %d", q);
+    /*Log("Right whitespace at %d", q);*/
     return check_expr(p, q - 1);
   }
   int op = main_op(p, q);
   if (op == -1) {
-    Log("cannot find main operator");
+    /*Log("cannot find main operator");*/
     return false;
   }
   if (op == p) {
-    Log("unary minus at %d", op);
+    /*Log("unary minus at %d", op);*/
     return (tokens[op].type == '-') && check_expr(op + 1, q);
   }
   else {
@@ -344,7 +344,7 @@ bool check_expr(int p, int q) {
 
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
-    Log("make_token: %s failed", e);
+    /*Log("make_token: %s failed", e);*/
     *success = false;
     return 0;
   }

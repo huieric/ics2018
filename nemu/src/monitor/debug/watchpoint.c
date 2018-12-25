@@ -22,7 +22,7 @@ void init_wp_pool() {
 
 WP* new_wp() {
   if (free_ == NULL) {
-    Log("Not enough watchpoint");
+    /*Log("Not enough watchpoint");*/
     assert(0);
     return NULL;
   }
@@ -74,7 +74,7 @@ void list_wp() {
 bool check_wp() {
   bool bChanged = false;
   for (WP* p = head; p != NULL; p = p->next) {
-    Log("check watchpoint %d: %s.", p->NO, p->expr);
+    /*Log("check watchpoint %d: %s.", p->NO, p->expr);*/
     bool success;
     uint32_t val = expr(p->expr, &success);
     if (val != p->val) {
