@@ -16,32 +16,32 @@ int printf(const char *fmt, ...) {
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
-  int d, len;
-  char* s;
-  char buf[4096] = { 0 };
-  len = 0;
-  while (*fmt) {
-    if (*fmt == '%') {
-      int n;
-      switch (*(fmt + 1)) {
-	case 's': s = va_arg(ap, char*);
-		  n = sprintf(out, s);
-		  break;
-	case 'd': d = va_arg(ap, int);
-		  n = sprintf(out, itoa(d, buf));
-		  break;
-	default: assert(0);
-      }
-      assert(n >= 0);
-      fmt += 2;
-      out += n;
-      len += n;
-    }
-    else {
-      *out++ = *fmt++;
-      len++;
-    }
-  }
+/*  int d, len;*/
+  /*char* s;*/
+  /*char buf[4096] = { 0 };*/
+  int len = 0;
+  /*while (*fmt) {*/
+    /*if (*fmt == '%') {*/
+      /*int n;*/
+      /*switch (*(fmt + 1)) {*/
+	/*case 's': s = va_arg(ap, char*);*/
+		  /*n = sprintf(out, s);*/
+		  /*break;*/
+	/*case 'd': d = va_arg(ap, int);*/
+		  /*n = sprintf(out, itoa(d, buf));*/
+		  /*break;*/
+	/*default: assert(0);*/
+      /*}*/
+      /*assert(n >= 0);*/
+      /*fmt += 2;*/
+      /*out += n;*/
+      /*len += n;*/
+    /*}*/
+    /*else {*/
+      /**out++ = *fmt++;*/
+      /*len++;*/
+    /*}*/
+  /*}*/
   return len;
 }
 
