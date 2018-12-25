@@ -46,6 +46,7 @@ static int cmd_p(char *args);
 static int cmd_x(char *args);
 static int cmd_w(char *args);
 static int cmd_d(char *args);
+static int cmd_b(char *args);
 
 static struct {
   char *name;
@@ -61,6 +62,7 @@ static struct {
   { "x", "Evaluate expression expr and print n doublewords of memory addressed from expr in hex", cmd_x },
   { "w", "Stop the execution when the value of expr changes", cmd_w },
   { "d", "delete the watchpoint of index n", cmd_d },
+  { "b", "Set breakpoint", cmd_b },
 
 };
 
@@ -179,6 +181,17 @@ static int cmd_w(char *args) {
   wp->val = val; 
    
   return 0;
+}
+
+static int cmd_b(char *args) {
+  char* arg = args;
+  if (arg == NULL) {
+    printf("One argument should be provided\n");
+    return 0;
+  }
+  char buf[128];
+  sprintf(buf, "$eip == %s", arg);
+  return cmd_w(buf);
 }
 
 static int cmd_d(char *args) {
