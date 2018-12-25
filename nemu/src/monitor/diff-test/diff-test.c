@@ -72,7 +72,7 @@ void difftest_step(uint32_t eip) {
   // TODO: Check the registers state with the reference design.
   // Set `nemu_state` to `NEMU_ABORT` if they are not the same.
   if (memcmp(&cpu, &ref_r, DIFFTEST_REG_SIZE)) {
-    printf("NEMU and QEMU differ at eip = 0x%8x\n", eip);
+    printf("NEMU and QEMU differ at eip = 0x%08x\n", eip);
     nemu_state = NEMU_ABORT;
   }
 }
