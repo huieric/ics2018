@@ -17,9 +17,9 @@ static PIO_t maps[NR_MAP];
 static int nr_map = 0;
 
 static void pio_callback(ioaddr_t addr, int len, bool is_write) {
-  Log("called!");
   int i;
   for (i = 0; i < nr_map; i ++) {
+    Log("called! addr=%x maps[i].low=%x addr+len-1=%x maps[i].high=%x", addr, maps[i].low, addr + len - 1, maps[i].high);
     if (addr >= maps[i].low && addr + len - 1 <= maps[i].high) {
       if (maps[i].callback != NULL) {
         maps[i].callback(addr, len, is_write);
