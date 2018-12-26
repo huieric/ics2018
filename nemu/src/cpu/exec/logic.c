@@ -97,3 +97,4 @@ make_EHelper(not) {
 
   print_asm_template1(not);
 }
+
