@@ -37,15 +37,19 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
       fmt = p_fmt;
 
       int n;
+      int size = atoi(num);
       switch (*fmt) {
 	case 's': s = va_arg(ap, char*);
-		  n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', atoi(num) - strlen(s)), s));
-		  break;
+    		  break;
 	case 'd': s = itoa(va_arg(ap, int), buf);
-		  n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', atoi(num) - strlen(s)), s));
 		  break;
 	default: assert(0);
       }
+
+      size = size ? size : strlen(s);
+      assert(size >= strlen(s));
+      n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', size - strlen(s)), s));
+
       assert(n >= 0);
       fmt += 2;
       out += n;
