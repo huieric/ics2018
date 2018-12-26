@@ -84,6 +84,10 @@ char* itoa(int d, char* str) {
   if (sign) {
     *p++ = '-';
   }
+  //处理0的特殊情况
+  if (d == 0) {
+    *buf = '0';
+  }
   while (d) {
     *p++ = (d % 10) + '0';
     d /= 10;
