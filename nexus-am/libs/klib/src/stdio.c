@@ -16,7 +16,6 @@ int printf(const char *fmt, ...) {
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
-  memset(out, 0, sizeof(out));
   int len;
   char* s;
   char buf[4096] = { 0 };
@@ -49,6 +48,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 
       size = size ? size : strlen(s);
       assert(size >= strlen(s));
+      memset(out, 0, size * sizeof(char));
       n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', size - strlen(s)), s));
 
       assert(n >= 0);
