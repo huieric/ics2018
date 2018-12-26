@@ -125,7 +125,7 @@ char* i2hex(int d, char* str) {
   char hex[9] = { 0 };
   for (int i = 0; i < 8; i++) {
     hex[i] = (d >> ((7 - i) * 4)) & 0xf;
-    if (hex[i] < 9) {
+    if (hex[i] < 10) {
       hex[i] += '0';
     }
     else {
