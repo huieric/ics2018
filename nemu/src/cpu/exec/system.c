@@ -69,7 +69,7 @@ make_EHelper(in) {
 }
 
 make_EHelper(out) {
-  Log("id_src->val=%x", id_src->val);
+  /*Log("id_src->val=%x", id_src->val);*/
   switch (id_src->width) {
     case 1: rtl_lr(&t0, id_src->reg, 1);
 	    pio_write_b(id_dest->val, t0);
