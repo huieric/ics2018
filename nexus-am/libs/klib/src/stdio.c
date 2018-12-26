@@ -29,7 +29,8 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 	fmt++;
       }
       const char* p_fmt = fmt;
-      while (*p_fmt != 's' && *p_fmt != 'd') {
+      while (*p_fmt != 's' && *p_fmt != 'd' && 
+	  *p_fmt != 'u' && *p_fmt != 'x' && *p_fmt != 'f') {
 	p_fmt++;
       }
       char num[32] = { 0 };
@@ -42,6 +43,12 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 	case 's': s = va_arg(ap, char*);
     		  break;
 	case 'd': s = itoa(va_arg(ap, int), buf);
+		  break;
+	case 'u': s = itoa(va_arg(ap, unsigned), buf);
+		  break;
+	case 'x': s = i2hex(va_arg(ap, int), buf);
+		  break;
+	case 'f': s = double2a(va_arg(ap, double), buf);
 		  break;
 	default: assert(0);
       }

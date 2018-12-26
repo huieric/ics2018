@@ -121,4 +121,38 @@ int atoi(const char* str) {
   return sign ? -result : result;
 }
 
+char* i2hex(int d, char* str) {
+  char hex[9] = { 0 };
+  for (int i = 0; i < 8; i++) {
+    hex[i] = (d >> ((7 - i) * 4)) & 0xf;
+    if (hex[i] < 9) {
+      hex[i] += '0';
+    }
+    else {
+      hex[i] += 'a' - 10;
+    }
+  }
+  char* p_hex = hex;
+  while (*p_hex == '0') p_hex++;
+  return strcpy(str, p_hex);
+}
+
+char* double2a(double f, char* str) {
+  char* p_str = str + strlen(itoa(f, str));
+  *p_str++ = '.';
+  double rem = f - (int)f;
+  if (rem == 0) {
+    *p_str++ = '0';
+  }
+  assert(0 < rem && rem < 1);
+  while (rem) {
+    rem *= 10;
+    *p_str++ = (int)rem + '0';
+    rem = rem - (int)rem;
+    assert(0 < rem && rem < 1);
+  }
+  *p_str = 0;
+  return str;
+}
+
 #endif
