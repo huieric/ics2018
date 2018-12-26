@@ -16,19 +16,33 @@ int printf(const char *fmt, ...) {
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
-  int d, len;
+  int len;
   char* s;
   char buf[4096] = { 0 };
   len = 0;
   while (*fmt) {
     if (*fmt == '%') {
+      fmt++;
+      int zero_flag = 0;
+      if (*fmt == '0') {
+	zero_flag = 1;
+	fmt++;
+      }
+      const char* p_fmt = fmt;
+      while (*p_fmt != 's' && *p_fmt != 'd') {
+	p_fmt++;
+      }
+      char num[32] = { 0 };
+      strncpy(num, fmt, p_fmt - fmt);
+      fmt = p_fmt;
+
       int n;
-      switch (*(fmt + 1)) {
+      switch (*fmt) {
 	case 's': s = va_arg(ap, char*);
-		  n = sprintf(out, s);
+		  n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', atoi(num) - strlen(s)), s));
 		  break;
-	case 'd': d = va_arg(ap, int);
-		  n = sprintf(out, itoa(d, buf));
+	case 'd': s = itoa(va_arg(ap, int), buf);
+		  n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', atoi(num) - strlen(s)), s));
 		  break;
 	default: assert(0);
       }

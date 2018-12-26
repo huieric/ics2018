@@ -102,4 +102,19 @@ char* strcpy_rev(char* dst, const char* src) {
   return dst;
 }
 
+int atoi(const char* str) {
+  int result = 0;
+  int sign = 0;
+  const char* p_str = str;
+  if (*p_str == '-') {
+    sign = 1;
+    p_str++;
+  }
+  while (*p_str) {
+    result = result * 10 + (*p_str - '0');
+    p_str++;
+  }
+  return sign ? -result : result;
+}
+
 #endif
