@@ -140,14 +140,14 @@ static int cmd_x(char *args) {
   int n = atoi(arg1);
   for (i = 0; i < n; i+=4) {
     if (i + 4 < n) {      
-      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, vaddr_read(addr, 4), 
-	  vaddr_read(addr + 4, 4), vaddr_read(addr + 8, 4), vaddr_read(addr + 12, 4));
+      printf("0x%-10x : 0x%-15x0x%-15x0x%-15x0x%-15x\n", addr, paddr_read(addr, 4), 
+	  paddr_read(addr + 4, 4), paddr_read(addr + 8, 4), paddr_read(addr + 12, 4));
     }
     else {
       int j;
       printf("0x%-10x : ", addr);
       for (j = 0; j < n - i; j++) {	
-	printf("0x%-15x", vaddr_read(addr, 4));
+	printf("0x%-15x", paddr_read(addr, 4));
 	addr += 4;
       }
       printf("\n");
