@@ -98,3 +98,24 @@ make_EHelper(not) {
   print_asm_template1(not);
 }
 
+make_EHelper(rol) {
+  while (id_src->val--) {
+    rtl_msb(&t0, &id_dest->val, id_dest->width);
+    id_dest->val <<= 1;
+    id_dest->val |= t0;
+  }
+  operand_write(id_dest, &id_dest->val);
+
+  print_asm_template2(rol);
+}
+
+make_EHelper(ror) {
+  while (id_src->val--) {
+    t0 = id_dest->val & 0x1;
+    id_dest->val >>= 1;
+    id_dest->val |= t0 << 31;
+  }
+  operand_write(id_dest, &id_dest->val);
+
+  print_asm_template2(ror);
+}
