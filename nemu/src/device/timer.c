@@ -14,7 +14,7 @@ void timer_intr() {
 static uint32_t *rtc_port_base;
 
 void rtc_io_handler(ioaddr_t addr, int len, bool is_write) {
-  Log("called!");
+  /*Log("called!");*/
   if (!is_write) {
     struct timeval now;
     gettimeofday(&now, NULL);
