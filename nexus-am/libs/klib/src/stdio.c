@@ -51,7 +51,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
       n = strlen(strcat(memset(out, zero_flag ? '0' : ' ', size - strlen(s)), s));
 
       assert(n >= 0);
-      fmt += 2;
+      fmt++;
       out += n;
       len += n;
     }
