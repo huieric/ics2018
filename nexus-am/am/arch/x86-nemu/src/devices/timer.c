@@ -4,14 +4,18 @@
 
 #define RTC_PORT 0x48
 
-static uint32_t am_init_time;
+static uint32_t am_last_time;
 
 size_t timer_read(uintptr_t reg, void *buf, size_t size) {
+  static uint64_t u64_uptime = 0;
   uint32_t now = inl(RTC_PORT);
+  u64_uptime += now - am_last_time;
+  am_last_time = now;
   switch (reg) {
     case _DEVREG_TIMER_UPTIME: {
       _UptimeReg *uptime = (_UptimeReg *)buf;
-      *(uint64_t*)uptime = now - am_init_time;
+      uptime->lo = u64_uptime & 0xffffffff;
+      uptime->hi = (u64_uptime >> 32) & 0xffffffff;
       return sizeof(_UptimeReg);
     }
     case _DEVREG_TIMER_DATE: {
@@ -29,5 +33,5 @@ size_t timer_read(uintptr_t reg, void *buf, size_t size) {
 }
 
 void timer_init() {
-  am_init_time = inl(RTC_PORT);
+  am_last_time = inl(RTC_PORT);
 }
