@@ -11,6 +11,7 @@ static uint8_t *serial_ch_base;
 static uint8_t *serial_lsr_base;
 
 static void serial_ch_io_handler(ioaddr_t addr, int len, bool is_write) {
+  Log("called!");
   assert(is_write);
   assert(len == 1);
   char c = serial_ch_base[0];

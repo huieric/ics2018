@@ -17,6 +17,7 @@ static PIO_t maps[NR_MAP];
 static int nr_map = 0;
 
 static void pio_callback(ioaddr_t addr, int len, bool is_write) {
+  Log("called!");
   int i;
   for (i = 0; i < nr_map; i ++) {
     if (addr >= maps[i].low && addr + len - 1 <= maps[i].high) {
@@ -51,6 +52,7 @@ static inline uint32_t pio_read_common(ioaddr_t addr, int len) {
 }
 
 static inline void pio_write_common(ioaddr_t addr, uint32_t data, int len) {
+  Log("called!");
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);
   switch (len) {
     case 4: *(uint32_t *)(pio_space + addr) = data; break;
