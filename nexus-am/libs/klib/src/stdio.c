@@ -42,9 +42,9 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
       switch (*fmt) {
 	case 's': s = va_arg(ap, char*);
     		  break;
-	case 'd': s = itoa(va_arg(ap, int), buf);
+	case 'd': s = my_itoa(va_arg(ap, int), buf);
 		  break;
-	case 'u': s = itoa(va_arg(ap, unsigned), buf);
+	case 'u': s = my_itoa(va_arg(ap, unsigned), buf);
 		  break;
 	case 'x': s = i2hex(va_arg(ap, int), buf);
 		  break;

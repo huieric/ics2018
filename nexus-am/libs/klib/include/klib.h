@@ -51,7 +51,7 @@ char* strncpy(char* dst, const char* src, size_t n);
 int strcmp(const char* s1, const char* s2);
 int strncmp(const char* s1, const char* s2, size_t n);
 int atoi(const char* str);
-char* itoa(int d, char* str);
+char* my_itoa(int d, char* str);
 char* i2hex(int d, char* str);
 char* double2a(double f, char* str);
 char* strcpy_rev(char* dst, const char* src);

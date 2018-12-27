@@ -77,7 +77,7 @@ int memcmp(const void* s1, const void* s2, size_t n){
   return 0;
 }
 
-char* itoa(int d, char* str) {
+char* my_itoa(int d, char* str) {
   int sign = d < 0 ? 1 : 0;
   char buf[4096] = { 0 };
   char* p = buf;
@@ -138,7 +138,7 @@ char* i2hex(int d, char* str) {
 }
 
 char* double2a(double f, char* str) {
-  char* p_str = str + strlen(itoa(f, str));
+  char* p_str = str + strlen(my_itoa(f, str));
   *p_str++ = '.';
   double rem = f - (int)f;
   if (rem == 0) {
