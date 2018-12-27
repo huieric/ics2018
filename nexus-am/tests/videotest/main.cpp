@@ -17,6 +17,7 @@ bool used[N][N];
 uint32_t color_buf[32 * 32];
 
 void redraw() {
+  printf("width=%d heitht=%d", screen_width(), screen_height());
   int w = screen_width() / N;
   int h = screen_height() / N;
   int block_size = w * h;
