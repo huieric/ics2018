@@ -49,6 +49,7 @@ void send_key(uint8_t scancode, bool is_keydown) {
 static void i8042_data_io_handler(ioaddr_t addr, int len, bool is_write) {
   assert(!is_write);
   assert(addr == I8042_DATA_PORT);
+  Log("key_f=%d key_r=%d", key_f, key_r);
   if (key_f != key_r) {
     i8042_data_port_base[0] = key_queue[key_f];
     key_f = (key_f + 1) % KEY_QUEUE_LEN;
