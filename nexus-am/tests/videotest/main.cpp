@@ -17,7 +17,6 @@ bool used[N][N];
 uint32_t color_buf[32 * 32];
 
 void redraw() {
-  printf("width=%d heitht=%d", screen_width(), screen_height());
   int w = screen_width() / N;
   int h = screen_height() / N;
   int block_size = w * h;
@@ -78,7 +77,6 @@ int main() {
 
   while (true) {
     unsigned long upt = uptime();
-    printf("%d %d %d\n", upt, last, 1000 / FPS);
     if (upt - last > 1000 / FPS) {
       update();
       redraw();
