@@ -26,7 +26,7 @@ size_t video_write(uintptr_t reg, void *buf, size_t size) {
       _FBCtlReg *ctl = (_FBCtlReg *)buf;
       for (int i = 0; i < ctl->h; i++) {
 	for (int j = 0; j < ctl->w; j++) {
-	  assert((ctl->y + j) * screen_width() + (ctl->x + i) < screen_width() * screen_height());
+	  /*assert((ctl->y + j) * screen_width() + (ctl->x + i) < screen_width() * screen_height());*/
 	  fb[(ctl->y + j) * screen_width() + (ctl->x + i)] = ctl->pixels[i * ctl->w + j];
 	}
       }
