@@ -38,6 +38,7 @@ static int key_f = 0, key_r = 0;
 void send_key(uint8_t scancode, bool is_keydown) {
   if (nemu_state == NEMU_RUNNING &&
       keymap[scancode] != _KEY_NONE) {
+    Log("called! scancode=%d", scancode);
     uint32_t am_scancode = keymap[scancode] | (is_keydown ? KEYDOWN_MASK : 0);
     key_queue[key_r] = am_scancode;
     key_r = (key_r + 1) % KEY_QUEUE_LEN;
@@ -55,7 +56,7 @@ static void i8042_data_io_handler(ioaddr_t addr, int len, bool is_write) {
   else {
     i8042_data_port_base[0] = _KEY_NONE;
   }
-  Log("called! i8042_data_port_base[0]=%d", i8042_data_port_base[0]);
+  /*Log("called! i8042_data_port_base[0]=%d", i8042_data_port_base[0]);*/
 }
 
 void init_i8042() {
