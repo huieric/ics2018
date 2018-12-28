@@ -23,6 +23,7 @@ void sys_yield(_Context* c) {
 }
 
 void sys_exit(_Context* c) {
+  Log("Good");
   _halt(c->GPR2);
   c->GPR1 = 0;
 }
