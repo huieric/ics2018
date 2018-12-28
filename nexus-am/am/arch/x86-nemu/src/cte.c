@@ -8,13 +8,12 @@ void vectrap();
 void vecnull();
 
 _Context* irq_handle(_Context *tf) {
-  printf("eax=%x ecx=%x edx=%x ebx=%x esp=%x ebp=%x esi=%x edi=%x\n", 
-      tf->eax, tf->ecx, tf->edx, tf->ebx, tf->esp, tf->ebp, tf->esi, tf->edi);
   _Context *next = tf;
   if (user_handler) {
     _Event ev = {0};
+    printf("%x\n", tf->irq);
     switch (tf->irq) {
-      case 81: ev.event = _EVENT_YIELD; break; 
+      case 0x81: ev.event = _EVENT_YIELD; break; 
       default: ev.event = _EVENT_ERROR; break;
     }
 
