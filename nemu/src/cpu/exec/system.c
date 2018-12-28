@@ -11,9 +11,9 @@ void pio_write_l(ioaddr_t addr, uint32_t data);
 void raise_intr(uint8_t NO, vaddr_t ret_addr);
 
 make_EHelper(lidt) {
-  rtl_li(&t0, cpu.idtr.limit);
   rtl_lm(&t0, &id_dest->addr, 2);
-  rtl_li(&t0, id_dest->addr + 2);
+  cpu.idtr.limit = t0;
+  rtl_addi(&t0, &id_dest->addr, 2);
   if (decoding.is_operand_size_16) {
     rtl_lm(&cpu.idtr.base, &t0, 3);
   }
