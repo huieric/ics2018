@@ -133,7 +133,7 @@ char* i2hex(int d, char* str) {
     }
   }
   char* p_hex = hex;
-  while (*p_hex == '0') p_hex++;
+  while (*p_hex == '0' && *(p_hex + 1)) p_hex++;
   return strcpy(str, p_hex);
 }
 
