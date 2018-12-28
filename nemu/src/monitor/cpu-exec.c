@@ -43,7 +43,7 @@ void cpu_exec(uint64_t n) {
     nr_guest_instr_add(1);
 
 #ifdef DEBUG
-    if (check_wp() == true) { 
+    if (check_wp() == true || cpu.eip == 0x100bc4) { 
       nemu_state = NEMU_STOP;
     }
 
