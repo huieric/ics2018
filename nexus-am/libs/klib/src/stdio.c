@@ -49,6 +49,8 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 		  break;
 	case 'f': s = double2a(va_arg(ap, double), buf);
 		  break;
+	case 'p': s = i2hex((uint32_t)va_arg(ap, void*), buf);
+		  break;
 	default: assert(0);
       }
 
