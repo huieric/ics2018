@@ -6,7 +6,7 @@ void sys_yield(_Context* c);
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
-
+  Log("%x", a[0]);
   switch (a[0]) {
     case 0: sys_yield(c); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
