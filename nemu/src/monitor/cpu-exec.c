@@ -41,7 +41,8 @@ void cpu_exec(uint64_t n) {
      * instruction decode, and the actual execution. */
     exec_wrapper(print_flag);
     nr_guest_instr_add(1);
-
+  
+    Log("%x", cpu.eip);
     if (cpu.eip == 0x100bd7) {
       nemu_state = NEMU_STOP;
     }
