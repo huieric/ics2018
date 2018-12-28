@@ -166,18 +166,16 @@ static int cmd_w(char *args) {
     return 0;
   }
   
-  WP* wp = new_wp();
- 
-  wp->expr = (char*)malloc(strlen(arg) + 1);
-  strcpy(wp->expr, arg);
-  wp->expr[strlen(arg)] = 0;
-  
   bool success = true;
-  uint32_t val = expr(wp->expr, &success);
+  uint32_t val = expr(arg, &success);
   if (!success) {
     printf("Bad expression\n");
     return 0;
   }
+  WP* wp = new_wp();
+  wp->expr = (char*)malloc(strlen(arg) + 1);
+  strcpy(wp->expr, arg);
+  wp->expr[strlen(arg)] = 0;
   wp->val = val; 
    
   return 0;
