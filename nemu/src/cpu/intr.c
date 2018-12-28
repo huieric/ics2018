@@ -14,6 +14,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
   vaddr_t addr = cpu.idtr.base + NO * sizeof(GateDesc);
   gatedesc.valL = vaddr_read(addr, 4);
   gatedesc.valH = vaddr_read(addr + 4, 4);
+  Log("NO=%x", NO);
   Assert(gatedesc.present, "invalid gate descriptor!");
 
   decoding.jmp_eip = (gatedesc.offset_31_16 << 16) | gatedesc.offset_15_0;
