@@ -32,6 +32,9 @@ void paddr_write(paddr_t addr, uint32_t data, int len) {
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
+  if (cpu.eip == 0x100c03) {
+    Log("addr=%x", addr);
+  }
   return paddr_read(addr, len);
 }
 
