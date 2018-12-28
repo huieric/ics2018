@@ -75,14 +75,14 @@ bool check_wp() {
   bool bChanged = false;
   for (WP* p = head; p != NULL; p = p->next) {
     /*Log("check watchpoint %d: %s.", p->NO, p->expr);*/
-    bool success;
-    uint32_t val = expr(p->expr, &success);
-    if (val != p->val) {
-      printf("nemu: watchpoint %d expr %s changed from %u to %u\n", 
-	  p->NO, p->expr, p->val, val);
-      p->val = val;
-      bChanged = true;
-    }
+    /*bool success;*/
+    /*uint32_t val = expr(p->expr, &success);*/
+    /*if (val != p->val) {*/
+      /*printf("nemu: watchpoint %d expr %s changed from %u to %u\n", */
+	  /*p->NO, p->expr, p->val, val);*/
+      /*p->val = val;*/
+      /*bChanged = true;*/
+    /*}*/
   }
   return bChanged;
 }
