@@ -59,7 +59,40 @@ make_EHelper(pusha) {
 }
 
 make_EHelper(popa) {
-  TODO();
+  if (decoding.is_operand_size_16) {
+    rtl_pop(&t1);
+    rtl_sr(R_DI, &t1, 2);
+    rtl_pop(&t1);
+    rtl_sr(R_SI, &t1, 2);
+    rtl_pop(&t1);
+    rtl_sr(R_BP, &t1, 2);
+    rtl_pop(&t0);
+    rtl_pop(&t1);
+    rtl_sr(R_BX, &t1, 2);
+    rtl_pop(&t1);
+    rtl_sr(R_DX, &t1, 2);
+    rtl_pop(&t1);
+    rtl_sr(R_CX, &t1, 2);
+    rtl_pop(&t1);
+    rtl_sr(R_AX, &t1, 2);
+  }
+  else {
+    rtl_pop(&t1);
+    rtl_sr(R_EDI, &t1, 4);
+    rtl_pop(&t1);
+    rtl_sr(R_ESI, &t1, 4);
+    rtl_pop(&t1);
+    rtl_sr(R_EBP, &t1, 4);
+    rtl_pop(&t0);
+    rtl_pop(&t1);
+    rtl_sr(R_EBX, &t1, 4);
+    rtl_pop(&t1);
+    rtl_sr(R_EDX, &t1, 4);
+    rtl_pop(&t1);
+    rtl_sr(R_ECX, &t1, 4);
+    rtl_pop(&t1);
+    rtl_sr(R_EAX, &t1, 4);
+  }
 
   print_asm("popa");
 }
