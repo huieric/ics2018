@@ -11,14 +11,18 @@ void pio_write_l(ioaddr_t addr, uint32_t data);
 void raise_intr(uint8_t NO, vaddr_t ret_addr);
 
 make_EHelper(lidt) {
-  rtl_lm(&t0, &id_dest->addr, 2);
-  cpu.idtr.limit = t0;
-  rtl_addi(&t0, &id_dest->addr, 2);
+  rtlreg_t data[3] = { 0 };
+  rtl_mv(&t0, &id_dest->addr);
+  rtl_lm(&data[0], &t0, 2);
+  rtl_addi(&t0, &t0, 2);
+  rtl_lm(&data[1], &t0, 2);
+  rtl_addi(&t0, &t0, 2);
+  rtl_lm(&data[2], &t0, 2);
+  
+  cpu.idtr.limit = data[0];
+  cpu.idtr.base = (data[2] << 16) | data[1];
   if (decoding.is_operand_size_16) {
-    rtl_lm(&cpu.idtr.base, &t0, 3);
-  }
-  else {
-    rtl_lm(&cpu.idtr.base, &t0, 4);
+    cpu.idtr.base &= 0xffffff;
   }
   Log("addr=%x limit=%x base=%x", id_dest->addr, cpu.idtr.limit, cpu.idtr.base);
 
