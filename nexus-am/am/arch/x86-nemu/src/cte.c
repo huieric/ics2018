@@ -6,6 +6,7 @@ static _Context* (*user_handler)(_Event, _Context*) = NULL;
 
 void vectrap();
 void vecnull();
+void vecsys();
 
 _Context* irq_handle(_Context *tf) {
   _Context *next = tf;
@@ -37,6 +38,7 @@ int _cte_init(_Context*(*handler)(_Event, _Context*)) {
 
   // -------------------- system call --------------------------
   idt[0x81] = GATE(STS_TG32, KSEL(SEG_KCODE), vectrap, DPL_KERN);
+  idt[0x80] = GATE(STS_T32A, USEL(SEG_UCODE), vecsys, DPL_USER); 
 
   set_idt(idt, sizeof(idt));
 
