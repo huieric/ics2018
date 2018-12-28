@@ -50,3 +50,4 @@ make_EHelper(rol);
 make_EHelper(ror);
 make_EHelper(lidt);
 make_EHelper(int);
+make_EHelper(pusha);
