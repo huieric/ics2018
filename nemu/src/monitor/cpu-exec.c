@@ -42,8 +42,7 @@ void cpu_exec(uint64_t n) {
     exec_wrapper(print_flag);
     nr_guest_instr_add(1);
   
-    Log("%x", cpu.eip);
-    if (cpu.eip == 0x100bd7) {
+    if (0x100bd4 <= cpu.eip && cpu.eip <= 0x100bdb) {
       nemu_state = NEMU_STOP;
     }
 
