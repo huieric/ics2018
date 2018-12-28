@@ -24,7 +24,6 @@ make_EHelper(lidt) {
   if (decoding.is_operand_size_16) {
     cpu.idtr.base &= 0xffffff;
   }
-  Log("addr=%x limit=%x base=%x", id_dest->addr, cpu.idtr.limit, cpu.idtr.base);
 
   print_asm_template1(lidt);
 }

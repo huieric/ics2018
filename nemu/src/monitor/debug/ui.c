@@ -82,8 +82,12 @@ static int cmd_si(char *args) {
 static int cmd_info(char *args) {
   /* extract the first argument */
   char* arg = strtok(NULL, " ");
+  if (arg == NULL) {
+    printf("One argument should be provided.\n");
+    return 0;
+  }
+
   int i;
-  
   if (strcmp(arg, "r") == 0) {
     for (i = R_EAX; i <= R_EDI; i++) {
       printf("%-10s0x%-15x%u\n", regsl[i], reg_l(i), reg_l(i));
@@ -127,8 +131,11 @@ static int cmd_p(char *args) {
 static int cmd_x(char *args) {
   char* arg1 = strtok(args, " ");
   char* arg2 = strtok(NULL, " ");
+  if (arg1 == NULL || arg2 == NULL) {
+    printf("Two arguments should be provided.\n");
+    return 0;
+  }
 
-  /* TODO: calc the expr */
   bool success = true;
   paddr_t addr = expr(arg2, &success);
   if (success == false) {
