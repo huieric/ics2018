@@ -22,6 +22,7 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
+  Log("why?");
   naive_uload(NULL, NULL);
   Log("ok");
 }
