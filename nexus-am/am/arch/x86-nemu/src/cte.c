@@ -1,5 +1,6 @@
 #include <am.h>
 #include <x86.h>
+#include <klib.h>
 
 static _Context* (*user_handler)(_Event, _Context*) = NULL;
 
@@ -7,6 +8,8 @@ void vectrap();
 void vecnull();
 
 _Context* irq_handle(_Context *tf) {
+  printf("eax=%x ecx=%x edx=%x ebx=%x esp=%x ebp=%x esi=%x edi=%x\n", 
+      tf->eax, tf->ecx, tf->edx, tf->ebx, tf->esp, tf->ebp, tf->esi, tf->edi);
   _Context *next = tf;
   if (user_handler) {
     _Event ev = {0};
