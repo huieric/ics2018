@@ -3,7 +3,6 @@
 #define DEFAULT_ENTRY 0x4000000
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  /*TODO();*/
   assert(0);
   return DEFAULT_ENTRY;
 }
