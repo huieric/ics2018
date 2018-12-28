@@ -20,6 +20,7 @@ make_EHelper(lidt) {
   else {
     rtl_lm(&cpu.idtr.base, &t0, 4);
   }
+  Log("addr=%x limit=%x base=%x", id_dest->addr, cpu.idtr.limit, cpu.idtr.base);
 
   print_asm_template1(lidt);
 }
