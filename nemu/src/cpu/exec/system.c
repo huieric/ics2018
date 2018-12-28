@@ -8,9 +8,18 @@ uint32_t pio_read_l(ioaddr_t addr);
 void pio_write_b(ioaddr_t addr, uint32_t data);
 void pio_write_w(ioaddr_t addr, uint32_t data);
 void pio_write_l(ioaddr_t addr, uint32_t data);
+void raise_intr(uint8_t NO, vaddr_t ret_addr);
 
 make_EHelper(lidt) {
-  TODO();
+  rtl_li(&t0, cpu.idtr.limit);
+  rtl_lm(&t0, &id_dest->addr, 2);
+  rtl_li(&t0, id_dest->addr + 2);
+  if (decoding.is_operand_size_16) {
+    rtl_lm(&cpu.idtr.base, &t0, 3);
+  }
+  else {
+    rtl_lm(&cpu.idtr.base, &t0, 4);
+  }
 
   print_asm_template1(lidt);
 }
@@ -32,7 +41,7 @@ make_EHelper(mov_cr2r) {
 }
 
 make_EHelper(int) {
-  TODO();
+  raise_intr(id_dest->val, *eip);
 
   print_asm("int %s", id_dest->str);
 

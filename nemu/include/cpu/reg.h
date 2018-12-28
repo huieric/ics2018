@@ -29,14 +29,22 @@ typedef struct {
 
   vaddr_t eip;
   
-  struct {
-    uint8_t CF :1;
-    uint8_t ZF :1;
-    uint8_t SF :1;
-    uint8_t IF :1;
-    uint8_t OF :1;
+  union {
+    struct {
+      uint8_t CF :1;
+      uint8_t ZF :1;
+      uint8_t SF :1;
+      uint8_t IF :1;
+      uint8_t OF :1;
+    };
+    uint32_t eflags;
   };
-
+  
+  uint16_t cs;
+  struct {
+    uint16_t limit;
+    uint32_t base;
+  } idtr;
 } CPU_state;
 
 extern CPU_state cpu;
