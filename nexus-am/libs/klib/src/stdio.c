@@ -29,8 +29,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 	fmt++;
       }
       const char* p_fmt = fmt;
-      while (*p_fmt != 's' && *p_fmt != 'd' && 
-	  *p_fmt != 'u' && *p_fmt != 'x' && *p_fmt != 'f') {
+      while ('0' <= *p_fmt && *p_fmt <= '9') {
 	p_fmt++;
       }
       char num[32] = { 0 };
