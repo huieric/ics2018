@@ -1,9 +1,11 @@
 #include "common.h"
 
+_Context* do_syscall(_Context* c);
+
 static _Context* do_event(_Event e, _Context* c) {
   switch (e.event) {
     case _EVENT_YIELD: Log("do event yield\n"); break;
-    case _EVENT_SYSCALL: assert(0); break;
+    case _EVENT_SYSCALL: do_syscall(c); break;
     default: panic("Unhandled event ID = %d", e.event);
   }
 
