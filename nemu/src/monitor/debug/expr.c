@@ -10,8 +10,6 @@
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_DEC, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEREF, TK_UMINUS,
 
-  /* TODO: Add more token types */
-
 };
 
 static struct rule {
@@ -19,9 +17,6 @@ static struct rule {
   int token_type;
 } rules[] = {
 
-  /* TODO: Add more rules.
-   * Pay attention to the precedence level of different rules.
-   */
 
   {" +", TK_NOTYPE},    // spaces
   {"^[1-9][0-9]*", TK_DEC},

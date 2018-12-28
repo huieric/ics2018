@@ -119,7 +119,7 @@ static int cmd_p(char *args) {
   bool success = true;
   uint32_t val = expr(arg, &success);
   if (success) {
-    printf("%u\n", val);
+    printf("0x%x\n", val);
   }
   else {
     printf("Bad expression!\n");

@@ -8,7 +8,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
   rtl_push(&cpu.eflags);
   rtl_li(&t0, cpu.cs);
   rtl_push(&t0);
-  rtl_push(&cpu.eip);
+  rtl_push(&ret_addr);
 
   GateDesc gatedesc;
   vaddr_t addr = cpu.idtr.base + NO * sizeof(GateDesc);
