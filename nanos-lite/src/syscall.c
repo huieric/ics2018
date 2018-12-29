@@ -30,6 +30,7 @@ void sys_exit(_Context* c, int code) {
 }
 
 void sys_write(_Context* c) {
+  Log("Good");
   char* buf = (char*)c->GPR3;
   size_t len = c->GPR4;
   switch (c->GPR2) {
