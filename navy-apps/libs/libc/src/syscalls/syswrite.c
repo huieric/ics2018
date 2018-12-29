@@ -8,5 +8,6 @@ write (int fd,
      const void *buf,
      size_t cnt)
 {
+  printf("called\n");
   return _write_r (_REENT, fd, buf, cnt);
 }
