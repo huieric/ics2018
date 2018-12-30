@@ -33,7 +33,6 @@ void sys_exit(_Context* c, int code) {
 void sys_write(_Context* c) {
   char* buf = (char*)c->GPR3;
   size_t len = c->GPR4;
-  Log("%x", len);
   size_t i;
   switch (c->GPR2) {
     case 1: for (i = 0; i < len && buf[i]; i++) {
@@ -49,9 +48,8 @@ void sys_write(_Context* c) {
 }
 
 void sys_brk(_Context* c) {
-  intptr_t addr = c->GPR2;
-  Log("%x", addr);
-  c->GPR1 = -1;
+  /*intptr_t addr = c->GPR2;*/
+  c->GPR1 = 0;
   /*extern PCB* current;*/
   /*if (addr < current->max_brk) {*/
     /*current->cur_brk = addr;*/
