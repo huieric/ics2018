@@ -4,9 +4,15 @@
 
 size_t ramdisk_read(void* buf, size_t offset, size_t size);
 size_t get_ramdisk_size();
+int fs_open(const char* pathname, int flags, int mode);
+size_t fs_read(int fd, void* buf, size_t len);
+int fs_close(int fd);
+size_t fs_filesz(int fd);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  ramdisk_read((void*)DEFAULT_ENTRY, 0, get_ramdisk_size());
+  int fd = fs_open(filename, 0, 0);
+  fs_read(fd, (void*)DEFAULT_ENTRY, fs_filesz(fd));
+  fs_close(fd);
   return DEFAULT_ENTRY;
 }
 
