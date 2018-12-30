@@ -34,11 +34,12 @@ void sys_write(_Context* c) {
   char* buf = (char*)c->GPR3;
   size_t len = c->GPR4;
   Log("%x", len);
+  size_t i;
   switch (c->GPR2) {
-    case 1: for (size_t i = 0; i < len; i++) {
+    case 1: for (i = 0; i < len && buf[i]; i++) {
 	      _putc(buf[i]);
 	    }
-	    c->GPR1 = len;
+	    c->GPR1 = i < len ? i : len;
 	    break;
     case 2: assert(0);
 	    break;
