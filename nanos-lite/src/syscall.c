@@ -48,7 +48,8 @@ void sys_write(_Context* c) {
 }
 
 void sys_brk(_Context* c) {
-  /*intptr_t addr = c->GPR2;*/
+  intptr_t addr = c->GPR2;
+  Log("%x", addr);
   c->GPR1 = 0;
   /*extern PCB* current;*/
   /*if (addr < current->max_brk) {*/
