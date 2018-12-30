@@ -39,8 +39,8 @@ int _write(int fd, void *buf, size_t count){
 }
 
 void *_sbrk(intptr_t increment){
-  char buf[256];
-  sprintf(buf, "Good", 256);
+  char buf[256] = "Good\n";
+  /*sprintf(buf, "Good", 256);*/
   write(1, buf, 256);
   extern char end;
   static void* cur_brk = (void*)&end;
