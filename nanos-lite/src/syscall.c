@@ -35,6 +35,7 @@ void sys_write(_Context* c) {
   size_t len = c->GPR4;
   size_t i;
   switch (c->GPR2) {
+    case 0: assert(0);
     case 1: for (i = 0; i < len && buf[i]; i++) {
 	      _putc(buf[i]);
 	    }
