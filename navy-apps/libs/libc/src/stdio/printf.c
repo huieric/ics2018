@@ -53,8 +53,6 @@ printf (const char *__restrict fmt, ...)
 
   _REENT_SMALL_CHECK_INIT (ptr);
   va_start (ap, fmt);
-  char buf[256] = "called\n";
-  write(1, buf, 256);
   ret = _vfprintf_r (ptr, _stdout_r (ptr), fmt, ap);
   va_end (ap);
   return ret;
