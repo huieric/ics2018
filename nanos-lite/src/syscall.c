@@ -95,6 +95,7 @@ void sys_close(_Context* c) {
 }
 
 void sys_lseek(_Context* c) {
+  Log("Good");
   int fd = c->GPR2;
   size_t offset = c->GPR3;
   int whence = c->GPR4;
