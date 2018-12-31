@@ -76,14 +76,12 @@ size_t fs_write(int fd, const void* buf, size_t len) {
 size_t fs_lseek(int fd, size_t offset, int whence) {
   enum { SEEK_SET, SEEK_CUR, SEEK_END, };
   size_t* p = &file_table[fd].open_offset;
-  Log("0x%x 0x%x", fd, file_table[fd].size);
   switch (whence) {
     case SEEK_SET: *p = offset; break;
     case SEEK_CUR: *p += offset; break;
     case SEEK_END: *p = file_table[fd].size + offset; break;
     default: assert(0);
   }
-  Log("0x%x", *p);
   assert(0 <= *p && *p <= file_table[fd].size);
   return *p;
 }
