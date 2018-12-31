@@ -58,7 +58,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
   }
   size_t real_len = ramdisk_read(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
-  Log("0x%x", real_len);
+  Log("0x%x 0x%x", len, real_len);
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
 }
