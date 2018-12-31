@@ -49,6 +49,7 @@ void sys_open(_Context* c) {
   int flags = c->GPR3;
   int mode = c->GPR4;
   c->GPR1 = fs_open(path, flags, mode);
+  Log("0x%x", c->GPR1);
 }
 void sys_read(_Context* c) {
   int fd = c->GPR2;
