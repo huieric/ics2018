@@ -71,17 +71,15 @@ void sys_write(_Context* c) {
   switch (fd) {
     case 0: assert(0);
     case 1: {
-	      char ch = *(char*)(buf + i);
-	      for (i = 0; i < len && ch; i++) {
-	        _putc(ch);
+	      for (i = 0; i < len && ((char*)buf)[i]; i++) {
+	        _putc(((char*)buf)[i]);
 	      }
 	      c->GPR1 = i < len ? i : len;
 	      break;
 	    }
     case 2: {
-	      char ch = *(char*)(buf + i);
-	      for (i = 0; i < len && ch; i++) {
-		_putc(ch);
+	      for (i = 0; i < len && ((char*)buf)[i]; i++) {
+		_putc(((char*)buf)[i]);
 	      }
 	      c->GPR1 = i < len ? i : len;
 	      break;
