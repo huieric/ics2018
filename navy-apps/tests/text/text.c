@@ -6,10 +6,10 @@ int main() {
   assert(fp);
 
   fseek(fp, 0, SEEK_END);
+  printf("Good\n");
   long size = ftell(fp);
   assert(size == 5000);
 
-  printf("Good\n");
   fseek(fp, 500 * 5, SEEK_SET);
   int i, n;
   for (i = 500; i < 1000; i ++) {
