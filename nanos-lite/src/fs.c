@@ -68,6 +68,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
   if (len > f.size - f.open_offset) {
     len = f.size - f.open_offset;
   }
+  Log("0x%x", f.open_offset);
   size_t real_len = ramdisk_write(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
   assert(0 <= f.open_offset && f.open_offset <= f.size);
