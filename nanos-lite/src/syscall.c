@@ -49,12 +49,13 @@ void sys_open(_Context* c) {
   int flags = c->GPR3;
   int mode = c->GPR4;
   c->GPR1 = fs_open(path, flags, mode);
-  Log("0x%x", c->GPR1);
 }
+
 void sys_read(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
+  Log("0x%x", len);
   switch (fd) {
     case 0: assert(0); break;
     case 1: assert(0); break;
