@@ -44,6 +44,7 @@ void init_fs() {
 int fs_open(const char* pathname, int flags, int mode) {
   for (int i = 0; i < NR_FILES; i++) {
     if (strcmp(pathname, file_table[i].name) == 0) {
+      file_table[i].open_offset = 0;
       return i;
     }
   }
@@ -59,7 +60,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
   Log("0x%x", f.open_offset);
   size_t real_len = ramdisk_read(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
-  Log("0x%x 0x%x 0x%x", len, real_len, f.open_offset);
+  Log("0x%x 0x%x 0x%x 0x%x", fd, len, real_len, f.open_offset);
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
 }
