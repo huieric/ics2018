@@ -42,6 +42,7 @@ void init_fs() {
 }
 
 int fs_open(const char* pathname, int flags, int mode) {
+  Log("called");
   for (int i = 0; i < NR_FILES; i++) {
     if (strcmp(pathname, file_table[i].name) == 0) {
       file_table[i].open_offset = 0;
@@ -54,9 +55,9 @@ int fs_open(const char* pathname, int flags, int mode) {
 
 size_t fs_read(int fd, void* buf, size_t len) {
   Finfo f = file_table[fd];
-  /*if (f.size < f.open_offset + len) {*/
-    /*len = f.size - f.open_offset;*/
-  /*}*/
+  if (f.size < f.open_offset + len) {
+    len = f.size - f.open_offset;
+  }
   Log("0x%x", f.open_offset);
   size_t real_len = ramdisk_read(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
@@ -66,6 +67,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
 }
 
 size_t fs_write(int fd, const void* buf, size_t len) {
+  Log("called");
   Finfo f = file_table[fd];
   if (len > f.size - f.open_offset) {
     len = f.size - f.open_offset;
@@ -77,8 +79,8 @@ size_t fs_write(int fd, const void* buf, size_t len) {
 }
 
 size_t fs_lseek(int fd, size_t offset, int whence) {
-  enum { SEEK_SET, SEEK_CUR, SEEK_END, };
   size_t* p = &file_table[fd].open_offset;
+  Log("open_offset=0x%x", *p);
   switch (whence) {
     case SEEK_SET: *p = offset; break;
     case SEEK_CUR: *p += offset; break;
