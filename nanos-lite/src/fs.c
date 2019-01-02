@@ -59,6 +59,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
   Log("%s %d %d %d", f.name, f.size, f.disk_offset, f.open_offset);
   size_t real_len = ramdisk_read(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
+  file_table[fd] = f;
   Log("%d %d %d %d", fd, len, real_len, f.open_offset);
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
@@ -72,6 +73,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
   }
   size_t real_len = ramdisk_write(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
+  file_table[fd] = f;
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
 }
