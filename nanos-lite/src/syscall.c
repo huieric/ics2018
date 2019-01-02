@@ -55,7 +55,6 @@ void sys_read(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  Log("0x%x", len);
   switch (fd) {
     case 0: assert(0); break;
     case 1: assert(0); break;
