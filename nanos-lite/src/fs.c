@@ -80,7 +80,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
 
 size_t fs_lseek(int fd, size_t offset, int whence) {
   size_t* p = &file_table[fd].open_offset;
-  Log("open_offset=0x%x", *p);
+  Log("fd=0x%x open_offset=0x%x", fd, *p);
   switch (whence) {
     case SEEK_SET: *p = offset; break;
     case SEEK_CUR: *p += offset; break;
