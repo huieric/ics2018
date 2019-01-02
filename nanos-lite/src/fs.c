@@ -11,8 +11,6 @@ typedef struct {
   size_t size;
   size_t disk_offset;
   size_t open_offset;
-  ReadFn read;
-  WriteFn write;
 } Finfo;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
@@ -29,9 +27,9 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
-  {"stdin", 0, 0, 0, invalid_read, invalid_write},
-  {"stdout", 0, 0, 0, invalid_read, invalid_write},
-  {"stderr", 0, 0, 0, invalid_read, invalid_write},
+  {"stdin", 0, 0, 0, },
+  {"stdout", 0, 0, 0, },
+  {"stderr", 0, 0, 0, },
 #include "files.h"
 };
 
@@ -73,7 +71,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
     len = f.size - f.open_offset;
   }
   size_t real_len = ramdisk_write(buf, f.disk_offset + f.open_offset, len);
-  /*f.open_offset += real_len;*/
+  f.open_offset += real_len;
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
 }
