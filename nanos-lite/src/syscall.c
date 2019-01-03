@@ -73,6 +73,7 @@ void sys_write(_Context* c) {
   Finfo* f = &file_table[fd];
   if (f->write) {
     c->GPR1 = f->write(buf, 0, len);
+    f->open_offset += c->GPR1;
   }
   else {
     c->GPR1 = fs_write(fd, buf, len);
