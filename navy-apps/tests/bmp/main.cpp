@@ -9,6 +9,7 @@ int main() {
   assert(bmp->pixels);
   NDL_OpenDisplay(bmp->w, bmp->h);
   NDL_DrawRect(bmp->pixels, 0, 0, bmp->w, bmp->h);
+  printf("w=%d h=%d\n", bmp->w, bmp->h);
   NDL_Render();
   NDL_CloseDisplay();
   printf("done\n");
