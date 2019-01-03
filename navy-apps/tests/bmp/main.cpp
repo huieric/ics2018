@@ -11,6 +11,7 @@ int main() {
   NDL_DrawRect(bmp->pixels, 0, 0, bmp->w, bmp->h);
   NDL_Render();
   NDL_CloseDisplay();
+  printf("done\n");
   while (1);
   return 0;
 }
