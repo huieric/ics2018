@@ -1,5 +1,6 @@
 #include "common.h"
 #include "syscall.h"
+#include "fs.h"
 
 void sys_yield(_Context* c);
 void sys_exit(_Context* c, int code);
@@ -52,16 +53,15 @@ void sys_open(_Context* c) {
 }
 
 void sys_read(_Context* c) {
-  Log("called");
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  switch (fd) {
-    case 0: assert(0); break;
-    case 1: assert(0); break;
-    case 2: assert(0); break;
-    default: c->GPR1 = fs_read(fd, buf, len);
-	     break;
+  Finfo* f = &file_table[fd];
+  if (f->read) {
+    c->GPR1 = f->read(buf, 0, len);
+  }
+  else {
+    c->GPR1 = fs_read(fd, buf, len);
   }
 }
 
@@ -69,25 +69,12 @@ void sys_write(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  size_t i = 0;
-  switch (fd) {
-    case 0: assert(0);
-    case 1: {
-	      for (i = 0; i < len && ((char*)buf)[i]; i++) {
-	        _putc(((char*)buf)[i]);
-	      }
-	      c->GPR1 = i < len ? i : len;
-	      break;
-	    }
-    case 2: {
-	      for (i = 0; i < len && ((char*)buf)[i]; i++) {
-		_putc(((char*)buf)[i]);
-	      }
-	      c->GPR1 = i < len ? i : len;
-	      break;
-	    }
-    default: c->GPR1 = fs_write(fd, buf, len);
-	     break;
+  Finfo* f = &file_table[fd];
+  if (f->write) {
+    c->GPR1 = f->write(buf, 0, len);
+  }
+  else {
+    c->GPR1 = fs_write(fd, buf, len);
   }
 }
 
