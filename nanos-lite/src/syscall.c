@@ -58,7 +58,8 @@ void sys_read(_Context* c) {
   size_t len = c->GPR4;
   Finfo* f = &file_table[fd];
   if (f->read) {
-    c->GPR1 = f->read(buf, 0, len);
+    c->GPR1 = f->read(buf, f->open_offset, len);
+    f->open_offset += c->GPR1;
   }
   else {
     c->GPR1 = fs_read(fd, buf, len);
