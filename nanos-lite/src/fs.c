@@ -60,6 +60,7 @@ size_t fs_lseek(int fd, size_t offset, int whence) {
     case SEEK_END: *p = file_table[fd].size + offset; break;
     default: assert(0);
   }
+  Log("%u %u", *p, file_table[fd].size);
   assert(0 <= *p && *p <= file_table[fd].size);
   return *p;
 }
