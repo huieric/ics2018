@@ -5,16 +5,6 @@ void sys_yield(_Context* c);
 void sys_exit(_Context* c, int code);
 void sys_write(_Context* c);
 void sys_brk(_Context* c);
-void sys_open(_Context* c);
-void sys_read(_Context* c);
-void sys_close(_Context* c);
-void sys_lseek(_Context* c);
-
-int fs_open(const char* pathname, int flags, int mode);
-size_t fs_read(int fd, void* buf, size_t len);
-size_t fs_write(int fd, void* buf, size_t len);
-int fs_close(int fd);
-size_t fs_lseek(int fd, size_t offset, int whence);
 
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
@@ -44,62 +34,24 @@ void sys_exit(_Context* c, int code) {
   c->GPR1 = 0;
 }
 
-void sys_open(_Context* c) {
-  const char* path = (const char*)c->GPR2;
-  int flags = c->GPR3;
-  int mode = c->GPR4;
-  c->GPR1 = fs_open(path, flags, mode);
-}
-
-void sys_read(_Context* c) {
-  int fd = c->GPR2;
-  void* buf = (void*)c->GPR3;
-  size_t len = c->GPR4;
-  switch (fd) {
-    case 0: assert(0); break;
-    case 1: assert(0); break;
-    case 2: assert(0); break;
-    default: c->GPR1 = fs_read(fd, buf, len);
-	     break;
-  }
-}
-
 void sys_write(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  size_t i = 0;
+  size_t i;
   switch (fd) {
     case 0: assert(0);
-    case 1: {
-	      for (i = 0; i < len && ((char*)buf)[i]; i++) {
-	        _putc(((char*)buf)[i]);
-	      }
-	      c->GPR1 = i < len ? i : len;
-	      break;
+    case 1: char c = *(char*)(buf + i);
+	    for (i = 0; i < len && c; i++) {
+	      _putc(c);
 	    }
-    case 2: {
-	      for (i = 0; i < len && ((char*)buf)[i]; i++) {
-		_putc(((char*)buf)[i]);
-	      }
-	      c->GPR1 = i < len ? i : len;
-	      break;
-	    }
-    default: c->GPR1 = fs_write(fd, buf, len);
+	    c->GPR1 = i < len ? i : len;
+	    break;
+    case 2: assert(0);
+	    break;
+    defaulc->GPt: fs_write(fd, buf, len);
 	     break;
   }
-}
-
-void sys_close(_Context* c) {
-  int fd = c->GPR2;
-  c->GPR1 = fs_close(fd);
-}
-
-void sys_lseek(_Context* c) {
-  int fd = c->GPR2;
-  size_t offset = c->GPR3;
-  int whence = c->GPR4;
-  c->GPR1 = fs_lseek(fd, offset, whence);
 }
 
 void sys_brk(_Context* c) {

@@ -6,8 +6,6 @@ size_t ramdisk_write(const void* buf, size_t offset, size_t len);
 typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
 
-size_t serial_write(const void* buf, size_t offset, size_t len);
-
 typedef struct {
   char *name;
   size_t size;
@@ -32,15 +30,18 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
   {"stdin", 0, 0, 0, invalid_read, invalid_write},
-  {"stdout", 0, 0, 0, invalid_read, serial_write},
-  {"stderr", 0, 0, 0, invalid_read, serial_write},
+  {"stdout", 0, 0, 0, invalid_read, invalid_write},
+  {"stderr", 0, 0, 0, invalid_read, invalid_write},
+  {"/dev/fb", 0, 0, 0, invalid_read, fb_write},
+  {"/proc/dispinfo", 128, 0, 0, dispinfo_read, invalid_write},
 #include "files.h"
 };
 
 #define NR_FILES (sizeof(file_table) / sizeof(file_table[0]))
 
 void init_fs() {
-  // TODO: initialize the size of /dev/fb
+  int fd = fs_open("/dev/fb", 0, 0);
+  file_table[fd].size = screen_width() * screen_height();
 }
 
 int fs_open(const char* pathname, int flags, int mode) {
@@ -59,9 +60,10 @@ size_t fs_read(int fd, void* buf, size_t len) {
   if (f.size < f.open_offset + len) {
     len = f.size - f.open_offset;
   }
+  Log("0x%x", f.open_offset);
   size_t real_len = ramdisk_read(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
-  file_table[fd] = f;
+  Log("0x%x 0x%x 0x%x 0x%x", fd, len, real_len, f.open_offset);
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
 }
@@ -73,12 +75,12 @@ size_t fs_write(int fd, const void* buf, size_t len) {
   }
   size_t real_len = ramdisk_write(buf, f.disk_offset + f.open_offset, len);
   f.open_offset += real_len;
-  file_table[fd] = f;
   assert(0 <= f.open_offset && f.open_offset <= f.size);
   return real_len;
 }
 
 size_t fs_lseek(int fd, size_t offset, int whence) {
+  enum { SEEK_SET, SEEK_CUR, SEEK_END, };
   size_t* p = &file_table[fd].open_offset;
   switch (whence) {
     case SEEK_SET: *p = offset; break;
