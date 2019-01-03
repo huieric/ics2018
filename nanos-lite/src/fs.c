@@ -2,7 +2,7 @@
 
 void init_fs() {
   int fd = fs_open("/dev/fb", 0, 0);
-  file_table[fd].size = screen_width() * screen_height();
+  file_table[fd].size = screen_width() * screen_height() * sizeof(uint32_t);
 }
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
@@ -51,7 +51,6 @@ size_t fs_write(int fd, const void* buf, size_t len) {
 }
 
 size_t fs_lseek(int fd, size_t offset, int whence) {
-  enum { SEEK_SET, SEEK_CUR, SEEK_END, };
   size_t* p = &file_table[fd].open_offset;
   switch (whence) {
     case SEEK_SET: *p = offset; break;
@@ -59,7 +58,8 @@ size_t fs_lseek(int fd, size_t offset, int whence) {
     case SEEK_END: *p = file_table[fd].size + offset; break;
     default: assert(0);
   }
-  // assert(0 <= *p && *p <= file_table[fd].size);
+  Log("offset=%d", offset);
+  assert(0 <= *p && *p <= file_table[fd].size);
   return *p;
 }
 
