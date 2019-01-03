@@ -52,6 +52,7 @@ void sys_open(_Context* c) {
 }
 
 void sys_read(_Context* c) {
+  Log("called");
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
