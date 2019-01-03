@@ -23,7 +23,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 static char dispinfo[128] __attribute__((used));
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  assert(0 <= offset + i && offset + i < 128);
+  assert(0 <= offset && offset + len < 128);
   for (int i = 0; i < len; i++) {
     ((char*)buf)[i] = dispinfo[offset + i];
   }

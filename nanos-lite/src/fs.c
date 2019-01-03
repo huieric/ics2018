@@ -6,6 +6,10 @@ size_t ramdisk_write(const void* buf, size_t offset, size_t len);
 typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
 
+size_t dispinfo_read(void* buf, size_t offset, size_t len);
+size_t fb_write(const void* buf, size_t offset, size_t len);
+int fs_open(const char* pathname, int flags, int mode);
+
 typedef struct {
   char *name;
   size_t size;
