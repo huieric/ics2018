@@ -1,6 +1,5 @@
 #include "common.h"
 #include "syscall.h"
-#include "fs.h"
 
 void sys_yield(_Context* c);
 void sys_exit(_Context* c, int code);
@@ -56,29 +55,14 @@ void sys_read(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  Finfo* f = &file_table[fd];
-  if (f->read) {
-    c->GPR1 = f->read(buf, f->open_offset, len);
-    f->open_offset += c->GPR1;
-  }
-  else {
-    c->GPR1 = fs_read(fd, buf, len);
-  }
+  c->GPR1 = fs_read(fd, buf, len);
 }
 
 void sys_write(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  Finfo* f = &file_table[fd];
-  if (f->write) {
-    Log("fd=%d open_offset=%d", fd, f->open_offset);
-    c->GPR1 = f->write(buf, f->open_offset, len);
-    f->open_offset += c->GPR1;
-  }
-  else {
-    c->GPR1 = fs_write(fd, buf, len);
-  }
+  c->GPR1 = fs_write(fd, buf, len);
 }
 
 void sys_close(_Context* c) {
@@ -91,7 +75,6 @@ void sys_lseek(_Context* c) {
   size_t offset = c->GPR3;
   int whence = c->GPR4;
   c->GPR1 = fs_lseek(fd, offset, whence);
-  Log("open_offset=%d", file_table[fd].open_offset);
 }
 
 void sys_brk(_Context* c) {
