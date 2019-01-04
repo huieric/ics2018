@@ -61,8 +61,7 @@ off_t _lseek(int fd, off_t offset, int whence) {
 }
 
 int _execve(const char *fname, char * const argv[], char *const envp[]) {
-  _exit(SYS_execve);
-  return 0;
+  return _syscall_(SYS_execve, (intptr_t)fname, (intptr_t)argv, (intptr_t)envp);
 }
 
 // The code below is not used by Nanos-lite.
@@ -79,5 +78,15 @@ int _kill(int pid, int sig) {
 
 pid_t _getpid() {
   _exit(-SYS_getpid);
+  return 1;
+}
+
+pid_t _fork() {
+  assert(0);
+  return 1;
+}
+
+pid_t _wait(int* wstatus) {
+  assert(0);
   return 1;
 }

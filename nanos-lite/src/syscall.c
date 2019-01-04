@@ -1,5 +1,6 @@
 #include "common.h"
 #include "syscall.h"
+#include "proc.h"
 
 void sys_yield(_Context* c);
 void sys_exit(_Context* c, int code);
@@ -9,12 +10,15 @@ void sys_open(_Context* c);
 void sys_read(_Context* c);
 void sys_close(_Context* c);
 void sys_lseek(_Context* c);
+void sys_execve(_Context* c);
 
 int fs_open(const char* pathname, int flags, int mode);
 size_t fs_read(int fd, void* buf, size_t len);
 size_t fs_write(int fd, void* buf, size_t len);
 int fs_close(int fd);
 size_t fs_lseek(int fd, size_t offset, int whence);
+
+void naive_uload(PCB* pcb, const char* filename);
 
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
@@ -28,6 +32,7 @@ _Context* do_syscall(_Context *c) {
     case SYS_read: sys_read(c); break;
     case SYS_close: sys_close(c); break;
     case SYS_lseek: sys_lseek(c); break;
+    case SYS_execve: sys_execve(c); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 
@@ -40,8 +45,10 @@ void sys_yield(_Context* c) {
 }
 
 void sys_exit(_Context* c, int code) {
-  _halt(code);
-  c->GPR1 = 0;
+  // _halt(code);
+  // c->GPR1 = 0;
+  naive_uload(NULL, "/bin/init");
+  assert(0);
 }
 
 void sys_open(_Context* c) {
@@ -88,4 +95,12 @@ void sys_brk(_Context* c) {
   /*else {*/
     /*c->GPR1 = -1;*/
   /*}*/
+}
+
+void sys_execve(_Context* c) {
+  const char *fname = (const char *)c->GPR2;
+  // char * const *argv = (char * const *)c->GPR3;
+  // char *const *envp = (char * const *)c->GPR4;
+  naive_uload(NULL, fname);
+  assert(0);
 }
