@@ -91,6 +91,7 @@ void sys_lseek(_Context* c) {
   size_t offset = c->GPR3;
   int whence = c->GPR4;
   c->GPR1 = fs_lseek(fd, offset, whence);
+  Log("open_offset=%d", file_table[fd].open_offset);
 }
 
 void sys_brk(_Context* c) {
