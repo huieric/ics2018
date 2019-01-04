@@ -22,7 +22,7 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  naive_uload(NULL, "/bin/bmptest");
+  naive_uload(NULL, "/bin/events");
 }
 
 _Context* schedule(_Context *prev) {

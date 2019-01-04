@@ -17,8 +17,22 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  
-  return 0;
+  int key = read_key();
+  int keydown = (key & 0x8000) != 0;
+  int keycode = keydown ? (key ^ 0x8000) : key;
+  int real_len;
+  if (keycode) {
+    if (keydown) {
+      real_len = snprintf(buf, len, "kd %s\n", keyname[keycode]);
+    }
+    else {
+      real_len = snprintf(buf, len, "ku %s\n", keyname[keycode]);
+    }
+  }
+  else {
+    real_len = snprintf(buf, len, "t %u\n", uptime());
+  }
+  return real_len;
 }
 
 static char dispinfo[128] __attribute__((used));
@@ -48,8 +62,5 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
 void init_device() {
   Log("Initializing devices...");
   _ioe_init();
-
-  // TODO: print the string to array `dispinfo` with the format
-  // described in the Navy-apps convention
   sprintf(dispinfo, "WIDTH:%d\nHEIGHT:%d\n", screen_width(), screen_height());
 }

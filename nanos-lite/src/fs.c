@@ -11,6 +11,7 @@ size_t invalid_write(const void *buf, size_t offset, size_t len);
 size_t dispinfo_read(void* buf, size_t offset, size_t len);
 size_t fb_write(const void* buf, size_t offset, size_t len);
 size_t serial_write(const void* buf, size_t offset, size_t len);
+size_t events_read(void* buf, size_t offset, size_t len);
 int fs_open(const char* pathname, int flags, int mode);
 
 typedef struct {
@@ -31,7 +32,7 @@ static Finfo file_table[] __attribute__((used)) = {
   {"stderr", 0, 0, 0, invalid_read, serial_write},
   {"/dev/fb", 0, 0, 0, invalid_read, fb_write},
   {"/proc/dispinfo", 0, 0, 0, dispinfo_read, invalid_write},
-  {"/dev/events", 0, 0, 0, invalid_read, invalid_write},
+  {"/dev/events", 0, 0, 0, events_read, invalid_write},
 #include "files.h"
 };
 
