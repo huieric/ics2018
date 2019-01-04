@@ -32,7 +32,6 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   else {
     real_len = snprintf(buf, len, "t %u\n", uptime());
   }
-  Log("len=%u buf=%s", len, buf);
   return real_len;
 }
 

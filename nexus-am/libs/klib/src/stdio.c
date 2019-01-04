@@ -89,7 +89,6 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
   if (len < 0) {
     return len;
   }
-  printf("[%s]: fmt=%s buf=%s\n", __FUNCTION__, fmt, buf);
 
   strncpy(out, buf, n);
   return len < n ? len : n;
