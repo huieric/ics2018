@@ -74,7 +74,6 @@ int NDL_Render() {
     for (int i = 0; i < canvas_h; i ++) {
       fseek(fbdev, ((i + pad_y) * screen_w + pad_x) * sizeof(uint32_t), SEEK_SET);
       fwrite(&canvas[i * canvas_w], sizeof(uint32_t), canvas_w, fbdev);
-      printf("pad_y=%d pad_x=%d canvas_h=%d canvas_w=%d\n", pad_y, pad_x, canvas_h, canvas_w);
     }
     fflush(fbdev);
   }
