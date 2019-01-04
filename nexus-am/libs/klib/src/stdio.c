@@ -84,13 +84,12 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
   char buf[4096] = { 0 };
   va_list args;
   va_start(args, fmt);
-  printf("[%s]: %s\n", __FUNCTION__, fmt);
   int len = vsprintf(out, fmt, args);
   va_end(args);
   if (len < 0) {
     return len;
   }
-  printf("[%s]: %s\n", __FUNCTION__, buf);
+  printf("[%s]: fmt=%s buf=%s\n", __FUNCTION__, fmt, buf);
 
   strncpy(out, buf, n);
   return len < n ? len : n;
