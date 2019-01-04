@@ -84,7 +84,7 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
   char buf[4096] = { 0 };
   va_list args;
   va_start(args, fmt);
-  int len = vsprintf(out, fmt, args);
+  int len = vsprintf(buf, fmt, args);
   va_end(args);
   if (len < 0) {
     return len;
