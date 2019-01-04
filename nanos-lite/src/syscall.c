@@ -101,6 +101,7 @@ void sys_execve(_Context* c) {
   const char *fname = (const char *)c->GPR2;
   // char * const *argv = (char * const *)c->GPR3;
   // char *const *envp = (char * const *)c->GPR4;
+  Log("fname=%s", fname);
   naive_uload(NULL, fname);
   assert(0);
 }
