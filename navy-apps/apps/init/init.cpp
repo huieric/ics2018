@@ -72,7 +72,6 @@ int main(int argc, char *argv[], char *envp[]) {
     exit(1);
   }
   fprintf(stderr, "Good\n");
-  printf("Good\n");
 
   open_display();
 
