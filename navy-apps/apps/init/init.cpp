@@ -86,7 +86,6 @@ int main(int argc, char *argv[], char *envp[]) {
     NDL_Event e;
     do {
       NDL_WaitEvent(&e);
-      printf("e.type=%d\n", e.type);
     } while (e.type != NDL_EVENT_KEYDOWN);
 
     int i = -1;

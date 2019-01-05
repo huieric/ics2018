@@ -85,6 +85,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
 size_t fs_write(int fd, const void* buf, size_t len) {
   Finfo* f = &file_table[fd];
   if (f->write) {
+    Log("fd=%d buf=%s fname=%s", fd, buf, f->name);
     size_t real_len = f->write(buf, f->open_offset, len);
     f->open_offset += real_len;
     return real_len;
