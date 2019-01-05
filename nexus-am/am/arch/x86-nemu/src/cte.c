@@ -48,7 +48,10 @@ int _cte_init(_Context*(*handler)(_Event, _Context*)) {
 }
 
 _Context *_kcontext(_Area stack, void (*entry)(void *), void *arg) {
-  return NULL;
+  _Context* cp = (_Context*)(stack.end - sizeof(_Context));
+  cp->eip = (uintptr_t)entry;
+  cp->cs = 0x8;
+  return cp;
 }
 
 void _yield() {
