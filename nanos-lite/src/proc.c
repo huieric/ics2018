@@ -8,6 +8,7 @@ PCB *current;
 
 void naive_uload(PCB* pcb, const char* filename);
 void context_kload(PCB *pcb, void *entry);
+void context_uload(PCB *pcb, const char *filename);
 
 void switch_boot_pcb() {
   current = &pcb_boot;
@@ -23,12 +24,12 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  context_kload(&pcb[0], (void*)hello_fun);
+  context_uload(&pcb[1], "/bin/init");
   switch_boot_pcb();
 }
 
 _Context* schedule(_Context *prev) {
   current->tf = prev;
-  current = &pcb[0];
+  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   return current->tf;
 }
