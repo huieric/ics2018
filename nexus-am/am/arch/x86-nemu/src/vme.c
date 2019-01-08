@@ -2,7 +2,7 @@
 
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
-static PDE kpdirs[NR_PDE] PG_ALIGN;
+PDE kpdirs[NR_PDE] PG_ALIGN;
 static PTE kptabs[PMEM_SIZE / PGSIZE] PG_ALIGN;
 static void* (*pgalloc_usr)(size_t);
 static void (*pgfree_usr)(void*);
