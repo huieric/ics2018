@@ -39,10 +39,9 @@ make_EHelper(mov_r2cr) {
 }
 
 make_EHelper(mov_cr2r) {
-  Log("reg=%d", id_src->reg);
   switch (id_src->reg) {
-    case R_EAX: operand_write(id_dest, &cpu.CR0);
-    case R_EBX: operand_write(id_dest, &cpu.CR3);
+    case R_EAX: operand_write(id_dest, &cpu.CR0); break;
+    case R_EBX: operand_write(id_dest, &cpu.CR3); break;
     default: assert(0);
   }
 
