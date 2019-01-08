@@ -76,6 +76,13 @@ void _switch(_Context *c) {
 }
 
 int _map(_Protect *p, void *va, void *pa, int mode) {
+  int present = mode & PTE_P;
+  PDE* pdir = (PDE*)p->ptr;
+  if (pdir[PDX(va)] == 0) {
+    pdir[PDX(va)] = (uintptr_t)pgalloc_usr(1) | present;
+  }
+  PTE* ptab = (PTE*)PTE_ADDR(pdir[PDX(va)]);
+  ptab[PTX(va)] = (uintptr_t)pa | present;
   return 0;
 }
 
@@ -94,5 +101,6 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *
   cp->eip = (uintptr_t)entry;
   cp->cs = 0x8;
   cp->esp = (uintptr_t)((void*)cp + sizeof(struct _Protect*) + 3 * sizeof(uintptr_t));
+  cp->prot = p;
   return cp;
 }
