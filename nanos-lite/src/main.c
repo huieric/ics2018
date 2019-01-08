@@ -11,7 +11,7 @@ int main() {
 #ifdef HAS_VME
   init_mm();
 #endif
-
+  assert(0);
   Log("'Hello World!' from Nanos-lite");
   Log("Build time: %s, %s", __TIME__, __DATE__);
 
