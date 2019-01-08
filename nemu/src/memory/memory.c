@@ -85,7 +85,7 @@ void vaddr_write(vaddr_t addr, uint32_t data, int len) {
 
 paddr_t page_translate(vaddr_t vaddr) {
   PDE* pdir = (PDE*)(uintptr_t)PTE_ADDR(cpu.CR3);
-  Log("PDX(vaddr)=%dpdir=0x%lx", PDX(vaddr), (uintptr_t)PTE_ADDR(cpu.CR3));
+  Log("PDX(vaddr)=%d pdir=0x%lx eip=0x%x", PDX(vaddr), (uintptr_t)PTE_ADDR(cpu.CR3), cpu.eip);
   assert(pdir[PDX(vaddr)] & PTE_P);
   PTE* ptab = (PTE*)(uintptr_t)PTE_ADDR(pdir[PDX(vaddr)]);
   assert(ptab[PTX(vaddr)] & PTE_P);
