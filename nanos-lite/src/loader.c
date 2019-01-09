@@ -36,12 +36,12 @@ void context_kload(PCB *pcb, void *entry) {
 
 void context_uload(PCB *pcb, const char *filename) {
   _protect(&pcb->as);
-  Log("ptr=0x%x", pcb->as.ptr);
   uintptr_t entry = loader(pcb, filename);
 
   _Area stack;
   stack.start = pcb->stack;
   stack.end = stack.start + sizeof(pcb->stack);
 
+  Log("ptr=0x%x", pcb->as.ptr);
   pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
 }
