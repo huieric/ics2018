@@ -40,7 +40,8 @@ _Context* do_syscall(_Context *c) {
 }
 
 void sys_yield(_Context* c) {
-  _yield();
+  // _yield();
+  _halt(0);
   c->GPR1 = 0;
 }
 
