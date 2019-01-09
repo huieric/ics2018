@@ -70,9 +70,6 @@ void sys_write(_Context* c) {
   int fd = c->GPR2;
   void* buf = (void*)c->GPR3;
   size_t len = c->GPR4;
-  if (fd == 1 || fd == 2 || fd == 6) {
-    Log("fd=%d len=%u buf=%s", fd, len, buf);
-  }
   c->GPR1 = fs_write(fd, buf, len);
 }
 
