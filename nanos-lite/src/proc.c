@@ -32,5 +32,6 @@ void init_proc() {
 _Context* schedule(_Context *prev) {
   current->tf = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  Log("ptr=0x%x", current->tf->prot);
   return current->tf;
 }
