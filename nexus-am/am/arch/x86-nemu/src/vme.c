@@ -2,7 +2,7 @@
 
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
-PDE kpdirs[NR_PDE] PG_ALIGN;
+static PDE kpdirs[NR_PDE] PG_ALIGN;
 static PTE kptabs[PMEM_SIZE / PGSIZE] PG_ALIGN;
 static void* (*pgalloc_usr)(size_t);
 static void (*pgfree_usr)(void*);
@@ -43,7 +43,6 @@ int _vme_init(void* (*pgalloc_f)(size_t), void (*pgfree_f)(void*)) {
   }
 
   set_cr3(kpdirs);
-  *kpdirs = *kpdirs;
   set_cr0(get_cr0() | CR0_PG);
 
   return 0;
