@@ -19,6 +19,7 @@ int fs_close(int fd);
 size_t fs_lseek(int fd, size_t offset, int whence);
 
 void naive_uload(PCB* pcb, const char* filename);
+int mm_brk(uintptr_t new_brk);
 
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
@@ -40,8 +41,7 @@ _Context* do_syscall(_Context *c) {
 }
 
 void sys_yield(_Context* c) {
-  // _yield();
-  _halt(0);
+  _yield();
   c->GPR1 = 0;
 }
 
@@ -89,16 +89,8 @@ void sys_lseek(_Context* c) {
 }
 
 void sys_brk(_Context* c) {
-  /*intptr_t addr = c->GPR2;*/
-  c->GPR1 = 0;
-  /*extern PCB* current;*/
-  /*if (addr < current->max_brk) {*/
-    /*current->cur_brk = addr;*/
-    /*c->GPR1 = 0;*/
-  /*}*/
-  /*else {*/
-    /*c->GPR1 = -1;*/
-  /*}*/
+  uintptr_t new_brk = c->GPR2;
+  c->GPR1 = mm_brk(new_brk);
 }
 
 void sys_execve(_Context* c) {

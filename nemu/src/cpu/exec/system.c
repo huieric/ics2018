@@ -31,7 +31,7 @@ make_EHelper(lidt) {
 make_EHelper(mov_r2cr) {
   switch (id_dest->reg) {
     case R_EAX: cpu.CR0 = id_src->val; break;
-    case R_EBX: cpu.CR3 = id_src->val; Log("cr3=0x%x", cpu.CR3); break;
+    case R_EBX: cpu.CR3 = id_src->val; break;
     default: assert(0);
   }
 

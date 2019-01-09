@@ -24,15 +24,13 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  // context_kload(&pcb[0], (void*)hello_fun);
-  context_uload(&pcb[0], "/bin/dummy");
+  context_kload(&pcb[0], (void*)hello_fun);
+  context_uload(&pcb[1], "/bin/pal");
   switch_boot_pcb();
 }
 
 _Context* schedule(_Context *prev) {
   current->tf = prev;
-  // current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
-  current = &pcb[0];
-  Log("ptr=0x%x", current->tf->prot->ptr);
+  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   return current->tf;
 }
