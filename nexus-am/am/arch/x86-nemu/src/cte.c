@@ -28,7 +28,9 @@ _Context* irq_handle(_Context *tf) {
     }
   }
 
-  _switch(next);
+  if (next->prot->ptr) {
+    _switch(next);
+  }
   return next;
 }
 
