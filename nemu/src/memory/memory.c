@@ -21,6 +21,7 @@ typedef uint32_t PDE;
 
 // Address in page table or page directory entry
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xfff)
+#define PTE_DATA(base, idx) (paddr_read((base) + (idx) * sizeof(paddr_t), sizeof(paddr_t)))
 
 #define PMEM_SIZE (128 * 1024 * 1024)
 #define PGSIZE    4096    // Bytes mapped by a page
@@ -84,11 +85,9 @@ void vaddr_write(vaddr_t addr, uint32_t data, int len) {
 }
 
 paddr_t page_translate(vaddr_t vaddr) {
-  cpu.CR3 += 0x1000;
-  PDE* pdir = (PDE*)(uintptr_t)PTE_ADDR(cpu.CR3);
-  Log("PDX(vaddr)=%d pdir=0x%lx eip=0x%x", PDX(vaddr), (uintptr_t)PTE_ADDR(cpu.CR3), cpu.eip);
-  assert(pdir[PDX(vaddr)] & PTE_P);
-  PTE* ptab = (PTE*)(uintptr_t)PTE_ADDR(pdir[PDX(vaddr)]);
-  assert(ptab[PTX(vaddr)] & PTE_P);
-  return (PTE_ADDR(ptab[PTX(vaddr)]) + OFF(vaddr));
+  paddr_t pdir = PTE_ADDR(cpu.CR3);
+  assert(PTE_DATA(pdir, PDX(vaddr)) & PTE_P);
+  paddr_t ptab = PTE_ADDR(PTE_DATA(pdir, PDX(vaddr)));
+  assert(PTE_DATA(ptab, PTX(vaddr)) & PTE_P);
+  return (PTE_ADDR(PTE_DATA(ptab, PTX(vaddr))) + OFF(vaddr));
 }
