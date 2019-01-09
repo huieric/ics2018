@@ -88,6 +88,7 @@ paddr_t page_translate(vaddr_t vaddr) {
   paddr_t pdir = PTE_ADDR(cpu.CR3);
   assert(PTE_DATA(pdir, PDX(vaddr)) & PTE_P);
   paddr_t ptab = PTE_ADDR(PTE_DATA(pdir, PDX(vaddr)));
+  Log("ptab[PTX(va)=0x%x", PTE_DATA(ptab, PTX(vaddr)));
   assert(PTE_DATA(ptab, PTX(vaddr)) & PTE_P);
   return (PTE_ADDR(PTE_DATA(ptab, PTX(vaddr))) + OFF(vaddr));
 }
