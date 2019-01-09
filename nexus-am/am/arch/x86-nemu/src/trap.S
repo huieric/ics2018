@@ -14,7 +14,7 @@ asm_trap:
 
   addl $4, %esp
 
-  movl %eax, %esp  # for process switching
+  ; movl %eax, %esp  # for process switching
 
   addl $4, %esp
   popal
