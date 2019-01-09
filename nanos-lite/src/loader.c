@@ -12,9 +12,10 @@ void* new_page(size_t nr_page);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
-  for (int i = 0; i < fs_filesz(fd); i += PGSIZE) {
+  void* va = (void*)DEFAULT_ENTRY;
+  for (int i = 0; i < fs_filesz(fd); i += PGSIZE, va += PGSIZE) {
     void* pg = new_page(1);
-    _map(&pcb->as, (void*)DEFAULT_ENTRY, pg, 0x001);
+    _map(&pcb->as, va, pg, 0x001);
     fs_read(fd, (void*)pg, PGSIZE);
   }  
   fs_close(fd);
