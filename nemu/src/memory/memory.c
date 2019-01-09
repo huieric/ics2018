@@ -89,7 +89,7 @@ paddr_t page_translate(vaddr_t vaddr) {
   assert(PTE_DATA(pdir, PDX(vaddr)) & PTE_P);
   paddr_t ptab = PTE_ADDR(PTE_DATA(pdir, PDX(vaddr)));
   if (!(PTE_DATA(ptab, PTX(vaddr)) & PTE_P)) {
-    Log("ptab[PTX(va)]=0x%x", PTE_DATA(ptab, PTX(vaddr)));
+    Log("pdir=0x%x ptab=0x%x ptab[PTX(va)]=0x%x", pdir, ptab, PTE_DATA(ptab, PTX(vaddr)));
   }
   assert(PTE_DATA(ptab, PTX(vaddr)) & PTE_P);
   return (PTE_ADDR(PTE_DATA(ptab, PTX(vaddr))) + OFF(vaddr));
