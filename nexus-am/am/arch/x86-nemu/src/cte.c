@@ -57,7 +57,6 @@ _Context *_kcontext(_Area stack, void (*entry)(void *), void *arg) {
   cp->eip = (uintptr_t)entry;
   cp->cs = 0x8;
   cp->esp = (uintptr_t)((void*)cp + sizeof(struct _Protect*) + 3 * sizeof(uintptr_t));
-  get_cur_as(cp);
   return cp;
 }
 
