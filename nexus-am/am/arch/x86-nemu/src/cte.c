@@ -12,7 +12,6 @@ void get_cur_as(_Context *c);
 void _switch(_Context *c);
 
 _Context* irq_handle(_Context *tf) {
-  tf = (_Context*)((void*)tf + 4);
   get_cur_as(tf);
   _Context *next = tf;
   if (user_handler) {
