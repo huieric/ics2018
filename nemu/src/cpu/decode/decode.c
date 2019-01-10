@@ -165,14 +165,8 @@ make_DHelper(I2E) {
 }
 
 make_DHelper(mov_I2E) {
-  if (cpu.eip == 0x100ff5) {
-    Log("eip=0x%x", *eip);
-  }
   decode_op_rm(eip, id_dest, false, NULL, false);
   decode_op_I(eip, id_src, true);
-  if (cpu.eip == 0x100ff5) {
-    Log("eip=0x%x", *eip);
-  }
 }
 
 /* XX <- Ib

@@ -225,6 +225,7 @@ static inline void update_eip(void) {
 }
 
 void exec_wrapper(bool print_flag) {
+  print_flag = true;
   vaddr_t ori_eip = cpu.eip;
 
 #ifdef DEBUG
