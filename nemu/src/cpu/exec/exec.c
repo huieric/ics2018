@@ -226,7 +226,7 @@ static inline void update_eip(void) {
 
 void exec_wrapper(bool print_flag) {
   vaddr_t ori_eip = cpu.eip;
-  if (ori_eip == 0x100ff6) {
+  if (ori_eip == 0x101000) {
     Log("ok");
   }
 
