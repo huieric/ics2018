@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 int main() {
-  printf("1\n");
+  // printf("1\n");
+  write(1, "1\n", 3);
   write(1, "Hello World!\n", 13);
   int i = 2;
   volatile int j = 0;
