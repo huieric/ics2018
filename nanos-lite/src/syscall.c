@@ -46,10 +46,10 @@ void sys_yield(_Context* c) {
 }
 
 void sys_exit(_Context* c, int code) {
-  // _halt(code);
-  // c->GPR1 = 0;
-  naive_uload(NULL, "/bin/init");
-  assert(0);
+  _halt(code);
+  c->GPR1 = 0;
+  // naive_uload(NULL, "/bin/init");
+  // assert(0);
 }
 
 void sys_open(_Context* c) {
