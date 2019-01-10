@@ -226,6 +226,9 @@ static inline void update_eip(void) {
 
 void exec_wrapper(bool print_flag) {
   vaddr_t ori_eip = cpu.eip;
+  if (ori_eip == 0x100fe4) {
+    Log("ok");
+  }
 
 #ifdef DEBUG
   decoding.p = decoding.asm_buf;
