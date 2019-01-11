@@ -19,6 +19,7 @@ int mm_brk(uintptr_t new_brk) {
   uintptr_t brk = current->max_brk;
   for (; brk < new_brk; brk += PGSIZE) {
     void* pa = new_page(1);
+    Log("new_brk=%p brk=%p pa=%p", new_brk, brk, pa);
     _map(&current->as, (void*)brk, pa, 0x001);
   }
   current->max_brk = brk;
