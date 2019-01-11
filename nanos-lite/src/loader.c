@@ -42,7 +42,7 @@ void context_uload(PCB *pcb, const char *filename) {
   _Area stack;
   stack.start = pcb->stack;
   stack.end = stack.start + sizeof(pcb->stack);  
-  pcb->max_brk = pcb->cur_brk = (uintptr_t)stack.start;
+  pcb->max_brk = pcb->cur_brk = (uintptr_t)stack.start + sizeof(_Context*) + sizeof(_Protect) + 2 * sizeof(uintptr_t);
 
   pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
 }
