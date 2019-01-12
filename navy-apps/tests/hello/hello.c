@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 int main() {
+  void* p = malloc(1);
+  free(p);
   write(1, "Hello World!\n", 13);
   int i = 2;
   volatile int j = 0;
