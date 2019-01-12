@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 int main() {
-  void* p = malloc(1);
-  p = malloc(2);
-  p = malloc(3);
+  void* p = malloc(1024);
+  p = malloc(1024);
+  p = malloc(1024);
   write(1, "Hello World!\n", 13);
   int i = 2;
   volatile int j = 0;
