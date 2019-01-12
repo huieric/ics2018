@@ -88,7 +88,7 @@ void sys_lseek(_Context* c) {
 void sys_brk(_Context* c) {
   uintptr_t new_brk = c->GPR2;
   uintptr_t end = c->GPR3;
-  Log("end=%p new_brk=%p", end, new_brk);
+  Log("end=%p new_brk=%p increment=%d", end, new_brk, c->GPR4);
   c->GPR1 = mm_brk(new_brk, end);
 }
 
