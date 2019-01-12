@@ -39,7 +39,7 @@ void *_sbrk(intptr_t increment){
   extern char end;
   static void* cur_brk = (void*)&end;
   void* new_brk = cur_brk + increment;
-  intptr_t ret = _syscall_(SYS_brk, (intptr_t)new_brk, (intptr_t)cur_brk, increment);
+  intptr_t ret = _syscall_(SYS_brk, (intptr_t)new_brk, 0, 0);
   if (ret == 0) {
     void* temp = cur_brk;
     cur_brk = new_brk;

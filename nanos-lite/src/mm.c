@@ -26,7 +26,6 @@ int mm_brk(uintptr_t new_brk) {
   }
   current->max_brk = brk;
   current->cur_brk = new_brk;
-  Log("cur_brk=%p", current->cur_brk);
   return 0;
 }
 
