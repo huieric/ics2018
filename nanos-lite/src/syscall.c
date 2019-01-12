@@ -19,7 +19,7 @@ int fs_close(int fd);
 size_t fs_lseek(int fd, size_t offset, int whence);
 
 void naive_uload(PCB* pcb, const char* filename);
-int mm_brk(uintptr_t new_brk);
+int mm_brk(uintptr_t new_brk, uintptr_t end);
 
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
@@ -88,8 +88,7 @@ void sys_lseek(_Context* c) {
 void sys_brk(_Context* c) {
   uintptr_t new_brk = c->GPR2;
   uintptr_t end = c->GPR3;
-  Log("end=%p new_brk=%p", end, new_brk);
-  c->GPR1 = mm_brk(new_brk);
+  c->GPR1 = mm_brk(new_brk, end);
 }
 
 void sys_execve(_Context* c) {

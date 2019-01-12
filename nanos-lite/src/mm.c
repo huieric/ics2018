@@ -15,9 +15,9 @@ void free_page(void *p) {
 }
 
 /* The brk() system call handler. */
-int mm_brk(uintptr_t new_brk) {
+int mm_brk(uintptr_t new_brk, uintptr_t end) {
   if (current->max_brk == 0) {
-    current->max_brk = current->cur_brk = new_brk; //init in first call
+    current->max_brk = current->cur_brk = end; //init in first call
   }
   uintptr_t brk = current->max_brk;
   for (; brk < new_brk; brk += PGSIZE) {
