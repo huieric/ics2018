@@ -126,7 +126,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *
   cp->eip = (uintptr_t)entry;
   cp->cs = 0x8;
   cp->eflags = 2;
-  cp->eflags |= 0x200;
+  cp->eflags |= 0x8;
   cp->esp = (uintptr_t)((void*)cp + sizeof(struct _Protect*) + 3 * sizeof(uintptr_t));
   cp->prot = p;
   *(uintptr_t *)ustack.start = (uintptr_t)cp; 

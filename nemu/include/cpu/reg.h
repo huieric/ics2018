@@ -47,6 +47,8 @@ typedef struct {
   } idtr;
 
   uint32_t CR3, CR0;
+
+  bool INTR;
 } CPU_state;
 
 extern CPU_state cpu;
