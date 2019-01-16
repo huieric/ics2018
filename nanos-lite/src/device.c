@@ -1,8 +1,8 @@
 #include "common.h"
 #include <amdev.h>
+#include "proc.h"
 
 size_t serial_write(const void *buf, size_t offset, size_t len) {
-  _yield();
   for (int i = 0; i < len; i++) {
     _putc(((const char*)buf)[i]);
   }
@@ -18,23 +18,30 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  _yield();
-  int key = read_key();
-  int keydown = (key & 0x8000) != 0;
-  int keycode = keydown ? (key ^ 0x8000) : key;
-  int real_len;
-  if (keycode) {
-    if (keydown) {
-      real_len = snprintf(buf, len, "kd %s\n", keyname[keycode]);
-    }
-    else {
-      real_len = snprintf(buf, len, "ku %s\n", keyname[keycode]);
+  int kc = read_key(), l;
+  
+  if ((kc & 0xfff) == _KEY_NONE) {
+    uint32_t ut = uptime();
+    l = sprintf(buf, "t %d\n", ut);
+  } else {
+    if (kc & 0x8000) {
+      l = sprintf(buf, "kd %s\n", keyname[kc & 0xfff]);
+      if ((kc & 0xfff) == _KEY_F1) {
+        Log("F1: %p", fg_pcb);
+        fg_pcb = pcbs[1];
+        
+      } else if ((kc & 0xfff) == _KEY_F2) {
+        
+        fg_pcb = pcbs[2];
+        Log("F2: %p", fg_pcb);
+      }
+      Log("events_read: %s", buf);
+    } else {
+      l = sprintf(buf, "ku %s\n", keyname[kc & 0xfff]);
+      Log("events_read: %s", buf);
     }
   }
-  else {
-    real_len = snprintf(buf, len, "t %u\n", uptime());
-  }
-  return real_len;
+  return l;
 }
 
 static char dispinfo[128] __attribute__((used));
@@ -53,7 +60,6 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  _yield();
   int x = (offset / sizeof(uint32_t)) % screen_width();
   int y = (offset / sizeof(uint32_t)) / screen_width();
   int w = len / sizeof(uint32_t);
