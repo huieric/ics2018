@@ -91,7 +91,6 @@ int _map(_Protect *p, void *va, void *pa, int mode) {
   if (mode == MAP_CREATE) {
     if ((pde & 0x1) == 0) {
       PTE *upt = (PTE *)(pgalloc_usr(1));
-      printf("_map: upt %p\n", upt);
       pde = ((PDE)upt & 0xfffff000) | 0x1;
       updir[DIR_BITS(vaddr)] = pde;
     }
