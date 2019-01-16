@@ -18,9 +18,11 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   int blen = pcb->as.pgsize;
   
   uintptr_t s = DEFAULT_ENTRY;
+  Log("loader: len 0x%x\n", len);
   char buf[blen];
   while (len > 0) {
     void* page_base = new_page(1);
+    Log("loader: page_base %p s: %p\n", page_base, s);
     _map(&pcb->as, (void *)s, page_base, MAP_CREATE);
     fs_read(fd, buf, blen);
     memcpy(page_base, buf , blen);
@@ -28,6 +30,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     len -= blen;
   }
   pcb->cur_brk = pcb->max_brk = s;
+  Log("loader: cur_brk %p s: %p\n", pcb->cur_brk, s);
   fs_close(fd);
   return DEFAULT_ENTRY;
 }
