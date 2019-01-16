@@ -1,4 +1,5 @@
 #include <x86.h>
+#include <klib.h>
 
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
@@ -12,6 +13,14 @@ _Area segments[] = {      // Kernel memory mappings
 };
 
 #define NR_KSEG_MAP (sizeof(segments) / sizeof(segments[0]))
+#define NR_KSEG_MAP (sizeof(segments) / sizeof(segments[0]))
+#define DIR_BITS(paddr) ((paddr >> 22) & 0x3ff)
+#define PAGE_BITS(paddr) ((paddr >> 12) & 0x3ff)
+#define OFFSET_BITS(paddr) (paddr & 0x3ff)
+#define FRAME_BITS(paddr) ((paddr >> 12) & 0xfffff)
+
+#define MAP_TEST 1
+#define MAP_CREATE 2
 
 int _vme_init(void* (*pgalloc_f)(size_t), void (*pgfree_f)(void*)) {
   pgalloc_usr = pgalloc_f;
@@ -76,14 +85,31 @@ void _switch(_Context *c) {
 }
 
 int _map(_Protect *p, void *va, void *pa, int mode) {
-  int present = mode & PTE_P;
-  PDE* pdir = (PDE*)p->ptr;
-  if (pdir[PDX(va)] == 0) {
-    pdir[PDX(va)] = (uintptr_t)pgalloc_usr(1) | present;
+  PDE *updir = (PDE *)(p->ptr);
+  intptr_t vaddr = (intptr_t) va;
+  PDE pde = updir[DIR_BITS(vaddr)];
+  if (mode == MAP_CREATE) {
+    if ((pde & 0x1) == 0) {
+      PTE *upt = (PTE *)(pgalloc_usr(1));
+      printf("_map: upt %p\n", upt);
+      pde = ((PDE)upt & 0xfffff000) | 0x1;
+      updir[DIR_BITS(vaddr)] = pde;
+    }
+    PTE *upt = (PTE *)(FRAME_BITS(pde) << 12);
+    PTE pte = upt[PAGE_BITS(vaddr)];
+    if ((pte & 0x1) == 0) {
+      upt[PAGE_BITS(vaddr)] = ((PTE)pa & 0xfffff000) | 0x1;
+    }
+  } else if (mode == MAP_TEST) {
+    if ((pde & 0x1) == 0) return 0;
+    else {
+      PTE *upt = (PTE *)(FRAME_BITS(pde) << 12);
+      PTE pte = upt[PAGE_BITS(vaddr)];
+      if ((pte & 0x1) == 0) return 0;
+    }
+    return 1;
   }
-  PTE* ptab = (PTE*)PTE_ADDR(pdir[PDX(va)]);
-  ptab[PTX(va)] = (uintptr_t)pa | present;
-  return 0;
+  return 1;
 }
 
 _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args) {
@@ -100,7 +126,10 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *
   _Context* cp = (_Context*)((void*)sf - sizeof(_Context));
   cp->eip = (uintptr_t)entry;
   cp->cs = 0x8;
+  cp->eflags = 2;
+  cp->eflags |= 0x200;
   cp->esp = (uintptr_t)((void*)cp + sizeof(struct _Protect*) + 3 * sizeof(uintptr_t));
   cp->prot = p;
+  *(uintptr_t *)ustack.start = (uintptr_t)cp; 
   return cp;
 }

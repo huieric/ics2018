@@ -37,7 +37,7 @@ _Context* do_syscall(_Context *c) {
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 
-  return c;
+  return NULL;
 }
 
 void sys_yield(_Context* c) {

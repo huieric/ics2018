@@ -1,6 +1,8 @@
 #include "proc.h"
 
 #define DEFAULT_ENTRY 0x8048000
+#define MAP_TEST 1
+#define MAP_CREATE 2
 
 size_t ramdisk_read(void* buf, size_t offset, size_t size);
 size_t get_ramdisk_size();
@@ -12,12 +14,23 @@ void* new_page(size_t nr_page);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
-  void* va = (void*)DEFAULT_ENTRY;
-  for (int i = 0; i < fs_filesz(fd); i += PGSIZE, va += PGSIZE) {
-    void* pg = new_page(1);
-    _map(&pcb->as, va, pg, 0x001);
-    fs_read(fd, (void*)pg, PGSIZE);
-  }  
+  int len = fs_filesz(fd);
+  int blen = pcb->as.pgsize;
+  
+  uintptr_t s = DEFAULT_ENTRY;
+  Log("loader: len 0x%x\n", len);
+  char buf[blen];
+  while (len > 0) {
+    void* page_base = new_page(1);
+    Log("loader: page_base %p s: %p\n", page_base, s);
+    _map(&pcb->as, (void *)s, page_base, MAP_CREATE);
+    fs_read(fd, buf, blen);
+    memcpy(page_base, buf , blen);
+    s += blen;
+    len -= blen;
+  }
+  pcb->cur_brk = pcb->max_brk = s;
+  Log("loader: cur_brk %p s: %p\n", pcb->cur_brk, s);
   fs_close(fd);
   return DEFAULT_ENTRY;
 }

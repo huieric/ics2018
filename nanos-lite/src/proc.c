@@ -4,7 +4,9 @@
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used));
 static PCB pcb_boot;
-PCB *current;
+PCB *current, *fg_pcb;
+PCB* pcbs[MAX_NR_PROC];
+static int count = 0;
 
 void naive_uload(PCB* pcb, const char* filename);
 void context_kload(PCB *pcb, void *entry);
@@ -26,15 +28,28 @@ void hello_fun(void *arg) {
 void init_proc() {
   // context_kload(&pcb[0], (void*)hello_fun);
   // context_uload(&pcb[0], "/bin/dummy");
-  // context_uload(&pcb[0], "/bin/hello");
   // context_uload(&pcb[0], "/bin/bmp");
-  context_uload(&pcb[0], "/bin/pal");
+  context_uload(&pcb[0], "/bin/hello");
+  context_uload(&pcb[1], "/bin/pal");
+  context_uload(&pcb[2], "/bin/pal");
+  pcbs[0] = &pcb[0];
+  pcbs[1] = &pcb[1];
+  pcbs[2] = &pcb[2];
+  fg_pcb = &pcb[1];
   switch_boot_pcb();
 }
 
 _Context* schedule(_Context *prev) {
   current->tf = prev;
+  current = fg_pcb;
   // current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
-  current = &pcb[0];
+  if (current == fg_pcb) {
+    count++;
+  }
+  if (count == 100) {
+    count = 0;
+    current->tf = prev;
+    current = &pcb[0];
+  }
   return current->tf;
 }
