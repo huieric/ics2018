@@ -29,8 +29,8 @@ int main (){
     }
     next_frame += 1000 / HZ;
 
-    while (keyboard_event());
-    while (update_keypress());
+    // while (keyboard_event());
+    // while (update_keypress());
      
     if (frames % (HZ / CHARACTER_PER_SECOND) == 0) {
       create_new_letter();
