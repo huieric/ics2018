@@ -42,10 +42,11 @@ int main (){
     }
 
     if(redraw) {
-    printf("1\n");
       num_draw ++;
       set_fps(num_draw * 1000 / time);
+      printf("start drawing\n");
       redraw_screen();
+      printf("done\n");
     }
   }
 }
