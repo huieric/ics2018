@@ -15,13 +15,15 @@ int main (){
   int num_draw = 0, frames = 0;
   unsigned long next_frame = 0, next_refresh = 0;
   while(1) {
-    unsigned long time;
-    bool redraw = false;
+    // unsigned long time;
+    unsigned long time = uptime();
+    // bool redraw = false;
+    bool redraw = true;
 
-    while (1) {
-      time = uptime();
-      if (time >= next_frame) break;
-    }
+    // while (1) {
+    //   time = uptime();
+    //   if (time >= next_frame) break;
+    // }
     frames ++;
     if (time > next_refresh) {
       redraw = true;
