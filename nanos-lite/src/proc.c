@@ -26,12 +26,12 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  // context_kload(&pcb[0], (void*)hello_fun);
-  // context_uload(&pcb[0], "/bin/dummy");
-  // context_uload(&pcb[0], "/bin/bmp");
-  context_uload(&pcb[0], "/bin/hello");
-  context_uload(&pcb[1], "/bin/pal");
-  context_uload(&pcb[2], "/bin/pal");
+  context_kload(&pcb[0], (void*)hello_fun);
+  context_uload(&pcb[1], "/bin/dummy");
+  context_uload(&pcb[2], "/bin/bmp");
+  // context_uload(&pcb[0], "/bin/hello");
+  // context_uload(&pcb[1], "/bin/pal");
+  // context_uload(&pcb[2], "/bin/pal");
   pcbs[0] = &pcb[0];
   pcbs[1] = &pcb[1];
   pcbs[2] = &pcb[2];
