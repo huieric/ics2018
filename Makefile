@@ -11,6 +11,13 @@ clean:
 
 submit: clean
 	git gc
-	STUID=$(STUID) STUNAME=$(STUNAME) bash -c "$$(curl -s http://moon.nju.edu.cn/people/yyjiang/teach/submit.sh)"
+	STUID=$(STUID) STUNAME=$(STUNAME) bash submit.sh
+
+setup:
+	STUID=$(STUID) STUNAME=$(STUNAME) bash setup.sh
+
+recover:
+	STUID=$(STUID) STUNAME=$(STUNAME) bash recover.sh
+
 
 .PHONY: default clean submit
