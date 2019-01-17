@@ -42,6 +42,7 @@ int read_key() {
 
 void draw_rect(uint32_t *pixels, int x, int y, int w, int h) {
   _Device *dev = getdev(&video_dev, _DEV_VIDEO);
+  printf("[%s]: 1 done\n", __func__);
   _FBCtlReg ctl;
   ctl.pixels = pixels;
   ctl.x = x;
@@ -50,15 +51,18 @@ void draw_rect(uint32_t *pixels, int x, int y, int w, int h) {
   ctl.h = h;
   ctl.sync = 0;
   dev->write(_DEVREG_VIDEO_FBCTL, &ctl, sizeof(ctl));
+  printf("[%s]: 2 done\n", __func__);
 }
 
 void draw_sync() {
   _Device *dev = getdev(&video_dev, _DEV_VIDEO);
+  printf("[%s]: 1 done\n", __func__);
   _FBCtlReg ctl;
   ctl.pixels = NULL;
   ctl.x = ctl.y = ctl.w = ctl.h = 0;
   ctl.sync = 1;
   dev->write(_DEVREG_VIDEO_FBCTL, &ctl, sizeof(ctl));
+  printf("[%s]: 2 done\n", __func__);
 }
 
 int screen_width() {

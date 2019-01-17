@@ -47,6 +47,7 @@ void redraw_screen() {
     buf[0] = it->text + 'A'; buf[1] = 0;
     draw_string(buf, it->x, it->y, 0xffffffff);
   }
+  printf("1 done\n");
 
   /* 绘制命中数、miss数、最后一次按键扫描码和fps */
   const char *key = itoa(last_key_code());
@@ -58,6 +59,7 @@ void redraw_screen() {
   const char *fps = itoa(get_fps());
   draw_string(fps, 0, 0, 0xf3f781);
   draw_string("FPS", strlen(fps) * 8, 0, 0xf3f781);
+  printf("2 done\n");
 
 #ifdef SCREEN_STRETCH
   int w = screen_width();
@@ -73,9 +75,11 @@ void redraw_screen() {
   int y = (screen_height() - H) / 2;
   draw_rect(&canvas[0][0], x, y, W, H);
 #endif
+  printf("3 done\n");
 
   draw_sync();
   for (int y = 0; y < H; y ++)
     for (int x = 0; x < W; x ++)
       canvas[y][x] = 0x2a0a29;
+  printf("4 done\n");
 }
